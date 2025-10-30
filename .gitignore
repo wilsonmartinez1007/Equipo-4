@@ -1,15 +1,93 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+# =========================================
+# ✅ Android Studio + Kotlin + Windows .gitignore
+# =========================================
+
+# ----------- ANDROID / GRADLE -----------
+# Gradle build folders
+.gradle/
+build/
+**/build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Local configuration
 local.properties
+captures/
+output.json
+.cxx/
+.navigation/
+
+# Generated files
+*.apk
+*.ap_
+*.dex
+*.class
+
+# ----------- ANDROID STUDIO / INTELLIJ IDEA -----------
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# IntelliJ-specific files
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/dictionaries
+.idea/**/shelf/
+.idea/**/libraries/
+.idea/**/caches/
+.idea/**/modules.xml
+.idea/**/vcs.xml
+.idea/**/misc.xml
+
+# ----------- KOTLIN / JAVA -----------
+# Compiled class files
+*.class
+# Log files
+*.log
+# Kotlin specific
+*.kotlin_module
+
+# ----------- SYSTEM FILES -----------
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.tmp
+*.bak
+*.swp
+
+# ----------- SIGNING / CREDENTIALS -----------
+*.jks
+*.keystore
+signing.properties
+
+# ----------- ANDROID BUILD VARIANTS -----------
+# Ignore generated build variants
+app/release/
+app/debug/
+
+# ----------- ENVIRONMENTS / TESTS -----------
+.env
+test-output/
+reports/
+
+# ----------- GRADLE CACHE -----------
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+
+# ----------- OTHER TOOLS -----------
+# VSCode settings (por si usas ambos)
+.vscode/
+# Firebase / Google Services
+google-services.json
+# Crashlytics
+fabric.properties
+
+# ----------- END -----------
+# =========================================
