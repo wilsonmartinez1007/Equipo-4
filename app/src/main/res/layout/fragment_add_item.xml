@@ -103,7 +103,20 @@
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
 
-
-
+        <Button
+            android:id="@+id/tbGuardarItem"
+            android:layout_width="match_parent"
+            android:layout_height="59dp"
+            android:layout_marginStart="15dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txCantidadArticulos"
+            android:layout_marginTop="45dp"
+            android:layout_marginEnd="15dp"
+            android:backgroundTint="@color/naranja"
+            android:text="Guardar"
+            android:textColor="@color/grisToolbar"
+            android:textStyle="bold"
+            android:enabled="false"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

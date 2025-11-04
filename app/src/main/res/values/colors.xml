@@ -3,7 +3,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="blackAddItemFragment">#CC000000</color>
-    #color con el gris de codigo #424242
+    <color name="naranja">#FF8C00</color>
     <color name="grisToolbar">#424242</color>
 
 </resources>
