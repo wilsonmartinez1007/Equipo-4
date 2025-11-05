@@ -11,6 +11,7 @@ import com.univalle.inventory.utils.Constants.NAME_BD
 abstract class InventoryDB : RoomDatabase() {
     abstract fun inventoryDao(): InventoryDao
     companion object{
+        //creamos la base de datos con el nombre de : NAME_BD el cual se asigna en: Constants
         fun getDatabase(context: Context): InventoryDB{
             return  Room.databaseBuilder(
                 context.applicationContext,

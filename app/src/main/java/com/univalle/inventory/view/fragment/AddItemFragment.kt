@@ -32,14 +32,18 @@ class AddItemFragment : Fragment() {
         controladores()
     }
 
+    //llamamos los metodos
     private fun controladores(){
         validarDatos()
         binding.btGuardarItem.setOnClickListener {
             getDataInventario()
         }
     }
+
+    //recibimos los datos digitado en los campos de nuestro fragment y le
+    //enviamos a inventoryViewModel un objeto Inventory con estos campos juntos
+    //recibimos el mensaje de si el proceso resulto con exito
     private fun getDataInventario(){
-        //codigo producto es entero
         val codigoProducto = binding.inputCodigoProducto.text.toString().toInt()
         val nombreProducto = binding.inputNombreProducto.text.toString()
         val precioProducto = binding.inputPrecioProducto.text.toString().toInt()
@@ -57,6 +61,7 @@ class AddItemFragment : Fragment() {
         Log.d("test", inventory.toString())
     }
 
+    //verificamos si todos los campos han sido llenados
     private fun validarDatos(){
         val listEditText = listOf(binding.inputCodigoProducto, binding.inputNombreProducto, binding.inputPrecioProducto, binding.inputCantidadArticulos)
 

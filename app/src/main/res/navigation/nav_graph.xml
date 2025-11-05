@@ -4,7 +4,9 @@
     android:id="@+id/nav_graph"
     xmlns:tools="http://schemas.android.com/tools"
     app:startDestination="@id/addItemFragment">
-
+    <!--Uso de navigation, en este caso su startDestination es el fragment que trabaje,
+     solo para ensayar que mi codigo si funcion
+      SE DEBE CAMBIAR POR EL FRAGMENT DE LA VENTANA PRINCIPALA-->
     <fragment
         android:id="@+id/addItemFragment"
         android:name="com.univalle.inventory.view.fragment.AddItemFragment"

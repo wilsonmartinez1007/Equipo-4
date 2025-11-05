@@ -15,6 +15,8 @@ class InventoryViewModel (application: Application): AndroidViewModel(applicatio
     private val inventoryRepository = InventoryRepository(context)
     private val _progresState = MutableLiveData(false)
 
+    //funcion que permite enviarle al repository el inventario(campos sobre el producto)
+    //ademas recibe y envia a addItemFragment el mensaje verificanto si el proceso de la BD resulto correcto
     fun saveInventory(inventory: Inventory, message:(String)-> Unit){
         viewModelScope.launch {
             _progresState.value = true
