@@ -8,6 +8,6 @@ import com.univalle.inventory.model.Inventory
 @Dao
 interface InventoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertInventory(inventory: Inventory)
+    suspend fun saveInventory(inventory: Inventory)
 
 }
