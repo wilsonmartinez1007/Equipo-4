@@ -21,7 +21,7 @@
              deben CAMBIAR el intent-filter al MainActivity o DashboardActivity,
              de modo que esa actividad sea la nueva pantalla de inicio (launcher). -->
         <activity
-            android:name=".ui.login.LoginActivity"
+            android:name=".view.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
