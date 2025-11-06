@@ -37,6 +37,7 @@ android {
     // Agregar ViewBinding Cm
     buildFeatures{
         viewBinding = true
+        dataBinding = true
     }
 }
 

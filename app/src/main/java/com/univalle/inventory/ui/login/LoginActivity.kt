@@ -9,7 +9,7 @@ import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
-import com.univalle.inventory.MainActivity
+import com.univalle.inventory.view.MainActivity
 import com.univalle.inventory.R
 import com.univalle.inventory.databinding.ActivityLoginBinding
 import java.util.concurrent.Executor
