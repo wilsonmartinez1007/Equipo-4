@@ -33,8 +33,9 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+    // Agregar ViewBinding Cm
     buildFeatures{
-        dataBinding = true
+        viewBinding = true
     }
 }
 
@@ -48,4 +49,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    // Animaciones Lottie libreria
+    implementation("com.airbnb.android:lottie:6.4.0")
+    // Biometría
+    implementation("androidx.biometric:biometric:1.2.0-alpha05")
+
 }
