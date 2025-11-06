@@ -2,4 +2,14 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!--Color negro para el fondo de la ventana como se requiere en los criterios-->
+    <color name="blackAddItemFragment">#CC000000</color>
+
+    <!--Color naranja para el boton de guardar un producto en el fragment : fragment_add_item.xml-->
+    <color name="naranja">#FF8C00</color>
+
+    <!--Color gris para la toolbar como se requiere en los criterios -->
+    <color name="grisToolbar">#424242</color>
+
 </resources>
