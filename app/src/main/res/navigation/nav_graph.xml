@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@id/addItemFragment">
+    app:startDestination="@id/productDetailFragment">
     <!--Uso de navigation, en este caso su startDestination es el fragment que trabaje,
      solo para ensayar que mi codigo si funcion
       SE DEBE CAMBIAR POR EL FRAGMENT DE LA VENTANA PRINCIPALA-->
@@ -12,4 +12,13 @@
         android:name="com.univalle.inventory.view.fragment.AddItemFragment"
         android:label="AddItemFragment"
         tools:layout="@layout/fragment_add_item"/>
+    <fragment
+        android:id="@+id/productDetailFragment"
+        android:name="com.univalle.inventory.view.fragment.ProductDetailFragment"
+        android:label="Detalle del producto"
+        tools:layout="@layout/fragment_product_detail">
+        <argument
+            android:name="productId"
+            app:argType="integer" />
+    </fragment>
 </navigation>
