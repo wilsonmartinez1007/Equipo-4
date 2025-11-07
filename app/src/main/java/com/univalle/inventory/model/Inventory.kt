@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import java.io.Serializable
 
 //creamos el objeto con sus atributos similares a los campos que rebido al comprar un producto
-@Entity
+@Entity(tableName = "inventory_table")
 data class Inventory (
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,

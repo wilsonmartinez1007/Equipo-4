@@ -2,9 +2,12 @@ package com.univalle.inventory.data
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.Update
+import androidx.room.Query
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.univalle.inventory.model.Inventory
+import androidx.lifecycle.LiveData
 
 @Dao
 interface InventoryDao {
@@ -20,4 +23,17 @@ interface InventoryDao {
     @Query("DELETE FROM Inventory WHERE id = :id")
     suspend fun deleteInventoryById(id: Int)
 
+    // Funcion de actualizacr en la base de datos
+    @Update
+    suspend fun update(inventory: Inventory)
+
+    // Funcion para obtener un registro por id
+    @Query("SELECT * FROM inventory_table WHERE id = :itemId")
+    suspend fun getInventoryById(itemId: Int): Inventory?
+
+    // FUNCION TEMPORAL Cuenta la cantidad de registros en la DB
+    // Esta valida si hay registros previos para evitar duplicidad
+    // de los registros de prueba que se insertan en la db
+    @Query("SELECT COUNT(*) FROM inventory_table")
+    suspend fun getCount(): Int
 }

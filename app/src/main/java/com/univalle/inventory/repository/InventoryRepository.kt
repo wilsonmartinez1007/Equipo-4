@@ -24,4 +24,12 @@ class InventoryRepository(val context: Context) {
 
         }
     }
+    // Obtener producto por ID
+    suspend fun getInventoryById(itemId: Int): Inventory? {
+        return try {
+            inventoryDao.getInventoryById(itemId)
+        } catch (e: Exception) {
+            null
+        }
+    }
 }
