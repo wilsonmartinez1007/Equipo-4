@@ -14,7 +14,6 @@ import com.univalle.inventory.databinding.FragmentEditItemBinding
 import com.univalle.inventory.viewmodel.InventoryViewModel
 import com.univalle.inventory.R
 import androidx.appcompat.widget.Toolbar
-import androidx.navigation.fragment.findNavController
 
 class EditItemFragment : Fragment() {
 
