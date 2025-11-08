@@ -29,4 +29,17 @@ class InventoryViewModel (application: Application): AndroidViewModel(applicatio
             }
         }
     }
+
+    fun getListInventory(){
+        viewModelScope.launch {
+            _progresState.value = true
+            try {
+                _listInventory.value = inventoryRepository.getListInventory()
+                _progresState.value = false
+            }catch (e: Exception){
+                _progresState.value = false
+            }
+        }
+
+    }
 }

@@ -10,19 +10,20 @@
     tools:context=".ui.login.LoginActivity">
 
     <!-- Imagen superior centrada -->
+
+    <!-- Título "Inventory" centrado y en color naranja -->
     <ImageView
         android:id="@+id/imgLogo"
         android:layout_width="250dp"
         android:layout_height="100dp"
-        android:layout_marginTop="120dp"
-        android:layout_marginEnd="30dp"
+        android:layout_marginTop="116dp"
+        android:layout_marginEnd="80dp"
         android:contentDescription="@string/logo_desc"
-        android:src="@drawable/inventory_widget"
         android:scaleType="centerCrop"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:src="@drawable/inventory_widget"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Título "Inventory" centrado y en color naranja -->
     <TextView
         android:id="@+id/tvInventoryTitle"
         android:layout_width="wrap_content"
