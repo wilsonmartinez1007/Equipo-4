@@ -1,45 +1,49 @@
 package com.univalle.inventory.viewmodel
 
 import android.app.Application
-import android.os.Message
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.univalle.inventory.model.Inventory
 import com.univalle.inventory.repository.InventoryRepository
 import kotlinx.coroutines.launch
 
-class InventoryViewModel (application: Application): AndroidViewModel(application){
-    val context = getApplication<Application>()
-    private val inventoryRepository = InventoryRepository(context)
-    private val _progresState = MutableLiveData(false)
+class InventoryViewModel(application: Application) : AndroidViewModel(application) {
 
-    //funcion que permite enviarle al repository el inventario(campos sobre el producto)
-    //ademas recibe y envia a addItemFragment el mensaje verificanto si el proceso de la BD resulto correcto
-    fun saveInventory(inventory: Inventory, message:(String)-> Unit){
+    private val repository = InventoryRepository(getApplication())
+
+    // LiveData para la lista del Home
+    private val _listInventory = MutableLiveData<List<Inventory>>(emptyList())
+    val listInventory: LiveData<List<Inventory>> = _listInventory
+
+    // Loader
+    private val _progressState = MutableLiveData(false)
+    val progressState: LiveData<Boolean> = _progressState
+
+    /** Carga la lista desde Room */
+    fun getListInventory() {
         viewModelScope.launch {
-            _progresState.value = true
+            _progressState.value = true
             try {
-                inventoryRepository.saveInventory(inventory){msg -> message(msg)
-                }
-                _progresState.value=false
-            }catch (e: Exception){
-                _progresState.value=false
+                _listInventory.value = repository.getListInventory()
+            } catch (e: Exception) {
+                _listInventory.value = emptyList()
+            } finally {
+                _progressState.value = false
             }
         }
     }
 
-    fun getListInventory(){
+    /** Guardar (HU 4.0) */
+    fun saveInventory(inventory: Inventory, message: (String) -> Unit) {
         viewModelScope.launch {
-            _progresState.value = true
+            _progressState.value = true
             try {
-                _listInventory.value = inventoryRepository.getListInventory()
-                _progresState.value = false
-            }catch (e: Exception){
-                _progresState.value = false
+                repository.saveInventory(inventory, message)
+                // refrescar lista si hace falta:
+                _listInventory.value = repository.getListInventory()
+            } finally {
+                _progressState.value = false
             }
         }
-
     }
+
 }

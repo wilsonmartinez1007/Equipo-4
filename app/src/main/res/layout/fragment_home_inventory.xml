@@ -31,7 +31,7 @@
                     android:layout_gravity="end"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:padding="8dp"
-                    android:src="@drawable/ic_logout"
+                    android:src="@drawable/ic_logout_img"
                     android:tint="@android:color/white"
                     android:contentDescription="cerrar_sesion" />
             </androidx.appcompat.widget.Toolbar>
