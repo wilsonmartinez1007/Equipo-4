@@ -10,9 +10,10 @@ class InventoryViewModel(application: Application) : AndroidViewModel(applicatio
 
     private val repository = InventoryRepository(getApplication())
 
-    // LiveData para la lista del Home
+
     private val _listInventory = MutableLiveData<List<Inventory>>(emptyList())
-    val listInventory: LiveData<List<Inventory>> = _listInventory
+    //LiveData que se actualiza solo
+    val listInventory: LiveData<List<Inventory>> = repository.observeInventories()
 
     // Loader
     private val _progressState = MutableLiveData(false)
@@ -23,7 +24,9 @@ class InventoryViewModel(application: Application) : AndroidViewModel(applicatio
         viewModelScope.launch {
             _progressState.value = true
             try {
-                _listInventory.value = repository.getListInventory()
+                // ⚠️ Clonamos la lista para garantizar una nueva instancia y disparar el observer
+                val data = repository.getListInventory().toList()
+                _listInventory.value = data
             } catch (e: Exception) {
                 _listInventory.value = emptyList()
             } finally {
@@ -31,6 +34,7 @@ class InventoryViewModel(application: Application) : AndroidViewModel(applicatio
             }
         }
     }
+
 
     /** Guardar (HU 4.0) */
     fun saveInventory(inventory: Inventory, message: (String) -> Unit) {
@@ -48,7 +52,7 @@ class InventoryViewModel(application: Application) : AndroidViewModel(applicatio
 
     // Nueva función para obtener un producto por ID
     fun getInventoryById(itemId: Int): LiveData<Inventory?> {
-        val inventoryLiveData = MutableLiveData<Inventory?>()
+        val out = MutableLiveData<Inventory?>()
         viewModelScope.launch {
             try {
                 val inventory = repository.getInventoryById(itemId)
@@ -57,7 +61,7 @@ class InventoryViewModel(application: Application) : AndroidViewModel(applicatio
                 inventoryLiveData.postValue(null)
             }
         }
-        return inventoryLiveData
+        return out
     }
 }
 

@@ -1,6 +1,7 @@
 package com.univalle.inventory.repository
 
 import android.content.Context
+import androidx.lifecycle.LiveData
 import com.univalle.inventory.data.InventoryDB
 import com.univalle.inventory.data.InventoryDao
 import com.univalle.inventory.model.Inventory
@@ -15,15 +16,16 @@ class InventoryRepository(context: Context) {
     // HU 4.0: guardar
     suspend fun saveInventory(inventory: Inventory, messageResponse: (String) -> Unit) {
         try {
-            withContext(Dispatchers.IO) { inventoryDao.saveInventory(inventory) }
+            withContext(Dispatchers.IO) {
+                inventoryDao.saveInventory(inventory)
+            }
             messageResponse("El inventario ha sido guardado con éxito")
         } catch (e: Exception) {
             messageResponse("Error al guardar el inventario: ${e.message}")
         }
     }
 
-
-    // HU 3.0: obtener la lista para el Home
+    // HU 3.0: lista para el Home
     suspend fun getListInventory(): List<Inventory> =
         withContext(Dispatchers.IO) { inventoryDao.getAllInventories() }
 
@@ -31,14 +33,4 @@ class InventoryRepository(context: Context) {
     suspend fun deleteById(itemId: Int) =
         withContext(Dispatchers.IO) { inventoryDao.deleteInventoryById(itemId) }
 
-
-    // Obtener producto por ID
-    suspend fun getInventoryById(itemId: Int): Inventory? {
-        return try {
-            inventoryDao.getInventoryById(itemId)
-        } catch (e: Exception) {
-            null
-        }
-    }
 }
-
