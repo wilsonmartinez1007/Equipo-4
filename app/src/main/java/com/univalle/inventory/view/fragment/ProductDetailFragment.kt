@@ -17,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import com.univalle.inventory.model.Inventory
 import java.text.NumberFormat
 import java.util.*
@@ -75,11 +76,12 @@ class ProductDetailFragment : Fragment() {
         // Editar producto
         fabEdit.setOnClickListener {
             // TODO: Navegar a HU 6.0 (Ventana Editar Producto)
-            // findNavController().navigate(R.id.action_detail_to_edit, bundleOf("productId" to productId))
+            findNavController().navigate(R.id.action_productDetailFragment_to_editItemFragment, bundleOf("productId" to productId))
         }
 
         return view
     }
+
 
     private fun loadProductDetail() {
         lifecycleScope.launch(Dispatchers.IO) {

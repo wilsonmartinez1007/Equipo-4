@@ -55,9 +55,10 @@ class InventoryViewModel(application: Application) : AndroidViewModel(applicatio
         val out = MutableLiveData<Inventory?>()
         viewModelScope.launch {
             try {
-                out.postValue(repository.getInventoryById(itemId))
-            } catch (_: Exception) {
-                out.postValue(null)
+                val inventory = repository.getInventoryById(itemId)
+                inventoryLiveData.postValue(inventory)
+            } catch (e: Exception) {
+                inventoryLiveData.postValue(null)
             }
         }
         return out

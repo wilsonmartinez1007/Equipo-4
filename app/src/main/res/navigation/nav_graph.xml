@@ -18,6 +18,9 @@
         <action
             android:id="@+id/action_homeInventoryFragment_to_productDetailFragment"
             app:destination="@id/productDetailFragment" />
+        <action
+            android:id="@+id/action_homeInventoryFragment_self"
+            app:destination="@id/homeInventoryFragment" />
     </fragment>
 
     <fragment
@@ -34,5 +37,13 @@
         <argument
             android:name="productId"
             app:argType="integer" />
+        <action
+            android:id="@+id/action_productDetailFragment_to_editItemFragment"
+            app:destination="@id/editItemFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/editItemFragment"
+        android:name="com.univalle.inventory.view.fragment.EditItemFragment"
+        android:label="EditItemFragment"
+        tools:layout="@layout/fragment_add_item"/>
 </navigation>
