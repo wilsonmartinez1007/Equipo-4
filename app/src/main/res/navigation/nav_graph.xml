@@ -1,21 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nav_graph"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@id/productDetailFragment">
-    <!--Uso de navigation, en este caso su startDestination es el fragment que trabaje,
-     solo para ensayar que mi codigo si funcion
-      SE DEBE CAMBIAR POR EL FRAGMENT DE LA VENTANA PRINCIPALA-->
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeInventoryFragment">
+
+    <fragment
+        android:id="@+id/homeInventoryFragment"
+        android:name="com.univalle.inventory.view.fragment.HomeInventoryFragment"
+        android:label="Inventario"
+        tools:layout="@layout/fragment_home_inventory">
+
+        <action
+            android:id="@+id/action_homeInventoryFragment_to_addItemFragment"
+            app:destination="@id/addItemFragment" />
+
+        <action
+            android:id="@+id/action_homeInventoryFragment_to_productDetailFragment"
+            app:destination="@id/productDetailFragment" />
+    </fragment>
+
     <fragment
         android:id="@+id/addItemFragment"
         android:name="com.univalle.inventory.view.fragment.AddItemFragment"
-        android:label="AddItemFragment"
-        tools:layout="@layout/fragment_add_item"/>
+        android:label="Agregar producto"
+        tools:layout="@layout/fragment_add_item" />
+
     <fragment
         android:id="@+id/productDetailFragment"
         android:name="com.univalle.inventory.view.fragment.ProductDetailFragment"
-        android:label="Detalle del producto"
+        android:label="Detalle"
         tools:layout="@layout/fragment_product_detail">
         <argument
             android:name="productId"

@@ -7,23 +7,35 @@ import com.univalle.inventory.model.Inventory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class InventoryRepository(val context: Context) {
-    private var inventoryDao: InventoryDao= InventoryDB.getDatabase(context).inventoryDao()
+class InventoryRepository(context: Context) {
 
-    //funcion que envia el inventario a la base de datos
-    //trabaja en segundo plano con corrutinas
-    //recibe y envia viewModel el mensaje verificando si el proceso resulto bien
-    suspend fun saveInventory(inventory: Inventory, messageResponse: (String) -> Unit){
+    private val inventoryDao: InventoryDao =
+        InventoryDB.getDatabase(context).inventoryDao()
+
+    // HU 4.0: guardar
+    suspend fun saveInventory(inventory: Inventory, messageResponse: (String) -> Unit) {
         try {
-            withContext(Dispatchers.IO){
-                inventoryDao.saveInventory(inventory)
-            }
-            messageResponse("El inventario ha sido guardado con exito")
-        }catch (e: Exception){
+            withContext(Dispatchers.IO) { inventoryDao.saveInventory(inventory) }
+            messageResponse("El inventario ha sido guardado con éxito")
+        } catch (e: Exception) {
             messageResponse("Error al guardar el inventario: ${e.message}")
-
         }
     }
+
+
+    // HU 3.0: obtener la lista para el Home
+    suspend fun getListInventory(): List<Inventory> =
+        withContext(Dispatchers.IO) { inventoryDao.getAllInventories() }
+
+    // Detalle por id
+    suspend fun getInventoryById(itemId: Int): Inventory? =
+        withContext(Dispatchers.IO) { inventoryDao.getInventoryById(itemId) }
+
+    // (Opcional) eliminar por id
+    suspend fun deleteById(itemId: Int) =
+        withContext(Dispatchers.IO) { inventoryDao.deleteInventoryById(itemId) }
+
+
     // Obtener producto por ID
     suspend fun getInventoryById(itemId: Int): Inventory? {
         return try {
@@ -33,3 +45,4 @@ class InventoryRepository(val context: Context) {
         }
     }
 }
+
