@@ -36,15 +36,15 @@ class HomeInventoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Toolbar: botón Cerrar sesión
-        // Si tu binding genera directamente btnLogout, usa binding.btnLogout; si no, usa findViewById sobre la toolbar.
-        binding.btnLogout.setOnClickListener {
+        // Toolbar (incluida desde toolbar_home.xml)
+        binding.toolbarHome.toolbarInventario.title = getString(R.string.app_name) // o "Inventario"
+        binding.toolbarHome.btnLogout.setOnClickListener {
             SessionManager(requireContext()).clear()
             startActivity(Intent(requireContext(), com.univalle.inventory.ui.login.LoginActivity::class.java))
             requireActivity().finishAffinity()
         }
 
-        // Recycler + Adapter (una sola vez)
+        // Recycler + Adapter
         adapterInventory = InventoryAdapter(mutableListOf(), findNavController())
         binding.recyclerViewInventario.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -62,12 +62,12 @@ class HomeInventoryFragment : Fragment() {
             if (loading) binding.recyclerViewInventario.isVisible = false
         }
 
-        // FAB → Agregar producto (HU 4.0)
+        // FAB → Agregar producto
         binding.fabAdd.setOnClickListener {
             findNavController().navigate(R.id.action_homeInventoryFragment_to_addItemFragment)
         }
 
-        // Cargar datos (HU 3.0)
+        // Cargar datos
         inventoryViewModel.getListInventory()
     }
 

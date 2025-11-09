@@ -10,9 +10,10 @@ class InventoryViewModel(application: Application) : AndroidViewModel(applicatio
 
     private val repository = InventoryRepository(getApplication())
 
-    // LiveData para la lista del Home
+
     private val _listInventory = MutableLiveData<List<Inventory>>(emptyList())
-    val listInventory: LiveData<List<Inventory>> = _listInventory
+    //LiveData que se actualiza solo
+    val listInventory: LiveData<List<Inventory>> = repository.observeInventories()
 
     // Loader
     private val _progressState = MutableLiveData(false)
@@ -48,16 +49,15 @@ class InventoryViewModel(application: Application) : AndroidViewModel(applicatio
 
     // Nueva función para obtener un producto por ID
     fun getInventoryById(itemId: Int): LiveData<Inventory?> {
-        val inventoryLiveData = MutableLiveData<Inventory?>()
+        val out = MutableLiveData<Inventory?>()
         viewModelScope.launch {
             try {
-                val inventory = inventoryRepository.getInventoryById(itemId)
-                inventoryLiveData.postValue(inventory)
-            } catch (e: Exception) {
-                inventoryLiveData.postValue(null)
+                out.postValue(repository.getInventoryById(itemId))
+            } catch (_: Exception) {
+                out.postValue(null)
             }
         }
-        return inventoryLiveData
+        return out
     }
 }
 
