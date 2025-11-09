@@ -9,9 +9,10 @@ import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.LottieDrawable
-import com.univalle.inventory.view.MainActivity
 import com.univalle.inventory.R
 import com.univalle.inventory.databinding.ActivityLoginBinding
+import com.univalle.inventory.utils.SessionManager
+import com.univalle.inventory.view.MainActivity
 import java.util.concurrent.Executor
 
 class LoginActivity : AppCompatActivity() {
@@ -25,19 +26,22 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Oculta la barra superior
         supportActionBar?.hide()
 
-        // Configurar animación Lottie
+        // 🔹 Si ya hay sesión, ir directo al Home
+        if (SessionManager(this).isLoggedIn()) {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+            return
+        }
+
+        // Animación Lottie (huella)
         val lottieView: LottieAnimationView = binding.lottieLogin
         lottieView.setAnimation(R.raw.finger)
         lottieView.repeatCount = LottieDrawable.INFINITE
         lottieView.playAnimation()
 
-        // Click sobre la huella inicia autenticación
-        binding.lottieLogin.setOnClickListener {
-            iniciarAutenticacionBiometrica()
-        }
+        binding.lottieLogin.setOnClickListener { iniciarAutenticacionBiometrica() }
 
         configurarBiometria()
     }
@@ -48,28 +52,32 @@ class LoginActivity : AppCompatActivity() {
 
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                 super.onAuthenticationSucceeded(result)
-                // Si la huella es válida → ir a pantalla principal
-                val intent = Intent(this@LoginActivity, MainActivity::class.java)
+
+                // ✅ Aquí se MARCA la sesión iniciada
+                SessionManager(this@LoginActivity).setLoggedIn(true)
+
+                // Ir al Home y evitar volver al login con back
+                val intent = Intent(this@LoginActivity, MainActivity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                }
                 startActivity(intent)
-                finish()
             }
 
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                 super.onAuthenticationError(errorCode, errString)
-                // Ignorar cancelaciones manuales
                 if (errorCode == BiometricPrompt.ERROR_CANCELED) return
             }
 
             override fun onAuthenticationFailed() {
                 super.onAuthenticationFailed()
-                // El sistema ya muestra su propio mensaje de error
+                // El sistema ya muestra el mensaje
             }
         })
     }
 
     private fun iniciarAutenticacionBiometrica() {
-        val biometricManager = BiometricManager.from(this)
-        when (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)) {
+        val bm = BiometricManager.from(this)
+        when (bm.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)) {
             BiometricManager.BIOMETRIC_SUCCESS -> {
                 val promptInfo = BiometricPrompt.PromptInfo.Builder()
                     .setTitle("Autenticación con Biometría")
@@ -78,18 +86,12 @@ class LoginActivity : AppCompatActivity() {
                     .build()
                 biometricPrompt.authenticate(promptInfo)
             }
-
-            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> {
+            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE ->
                 Toast.makeText(this, "Este dispositivo no tiene sensor de huella", Toast.LENGTH_LONG).show()
-            }
-
-            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
+            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED ->
                 Toast.makeText(this, "No hay huellas registradas en el dispositivo", Toast.LENGTH_LONG).show()
-            }
-
-            else -> {
+            else ->
                 Toast.makeText(this, "Biometría no disponible", Toast.LENGTH_LONG).show()
-            }
         }
     }
 }

@@ -38,7 +38,7 @@ class InventoryViewModel(application: Application) : AndroidViewModel(applicatio
             _progressState.value = true
             try {
                 repository.saveInventory(inventory, message)
-                // refrescar lista si hace falta:
+
                 _listInventory.value = repository.getListInventory()
             } finally {
                 _progressState.value = false
