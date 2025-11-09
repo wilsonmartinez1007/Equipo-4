@@ -24,7 +24,9 @@ class InventoryViewModel(application: Application) : AndroidViewModel(applicatio
         viewModelScope.launch {
             _progressState.value = true
             try {
-                _listInventory.value = repository.getListInventory()
+                // ⚠️ Clonamos la lista para garantizar una nueva instancia y disparar el observer
+                val data = repository.getListInventory().toList()
+                _listInventory.value = data
             } catch (e: Exception) {
                 _listInventory.value = emptyList()
             } finally {
@@ -32,6 +34,7 @@ class InventoryViewModel(application: Application) : AndroidViewModel(applicatio
             }
         }
     }
+
 
     /** Guardar (HU 4.0) */
     fun saveInventory(inventory: Inventory, message: (String) -> Unit) {

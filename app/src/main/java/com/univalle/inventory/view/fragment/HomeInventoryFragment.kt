@@ -37,10 +37,12 @@ class HomeInventoryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Toolbar (incluida desde toolbar_home.xml)
-        binding.toolbarHome.toolbarInventario.title = getString(R.string.app_name) // o "Inventario"
+        binding.toolbarHome.toolbarInventario.title = getString(R.string.app_name)
         binding.toolbarHome.btnLogout.setOnClickListener {
             SessionManager(requireContext()).clear()
-            startActivity(Intent(requireContext(), com.univalle.inventory.ui.login.LoginActivity::class.java))
+            startActivity(
+                Intent(requireContext(), com.univalle.inventory.ui.login.LoginActivity::class.java)
+            )
             requireActivity().finishAffinity()
         }
 
@@ -67,9 +69,20 @@ class HomeInventoryFragment : Fragment() {
             findNavController().navigate(R.id.action_homeInventoryFragment_to_addItemFragment)
         }
 
-        // Cargar datos
+        // Primera carga
         inventoryViewModel.getListInventory()
     }
+
+    override fun onResume() {
+        super.onResume()
+        inventoryViewModel.getListInventory()
+
+        // Ajuste defensivo de visibilidad por si el observer aún no disparó
+        val hasItems = ::adapterInventory.isInitialized && adapterInventory.itemCount > 0
+        binding.recyclerViewInventario.isVisible = hasItems
+        binding.progressCircular.isVisible = false
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
