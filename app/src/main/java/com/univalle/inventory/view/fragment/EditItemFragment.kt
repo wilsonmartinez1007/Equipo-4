@@ -14,6 +14,7 @@ import com.univalle.inventory.databinding.FragmentEditItemBinding
 import com.univalle.inventory.viewmodel.InventoryViewModel
 import com.univalle.inventory.R
 import androidx.appcompat.widget.Toolbar
+import androidx.navigation.fragment.findNavController
 
 class EditItemFragment : Fragment() {
 
@@ -22,6 +23,8 @@ class EditItemFragment : Fragment() {
 
     // Variable para almacenar el ID del producto que se está editando
     private var currentProductId: Int = 0
+    private var productId: Int = -1
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,10 +38,12 @@ class EditItemFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val toolbar = requireView().findViewById<Toolbar>(R.id.toolbarBase)
+        toolbar.setNavigationOnClickListener { findNavController().popBackStack() }
         toolbar.title = "Editar Producto"
 
         // Cargar datos del item con id 1
-        cargarDatosItem(3)
+        arguments?.let { productId = it.getInt("productId", -1) }
+        cargarDatosItem(productId)
         controladores()
     }
 
@@ -99,7 +104,7 @@ class EditItemFragment : Fragment() {
         inventoryViewModel.saveInventory(inventory){ message ->
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             // Navegar de regreso después de actualizar
-            // findNavController().navigateUp()
+            findNavController().navigateUp()
         }
         Log.d("test", inventory.toString())
     }

@@ -14,6 +14,7 @@ import com.univalle.inventory.databinding.FragmentAddItemBinding
 import com.univalle.inventory.viewmodel.InventoryViewModel
 import com.univalle.inventory.R
 import androidx.appcompat.widget.Toolbar
+import androidx.navigation.fragment.findNavController
 
 class AddItemFragment : Fragment() {
 
@@ -37,6 +38,7 @@ class AddItemFragment : Fragment() {
 
     //llamamos los metodos
     private fun controladores(){
+        regresarFragment()
         validarDatos()
         binding.btGuardarItem.setOnClickListener {
             getDataInventario()
@@ -59,7 +61,7 @@ class AddItemFragment : Fragment() {
             quantity = cantidadArticulos)
         inventoryViewModel.saveInventory(inventory){ message ->
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-
+            findNavController().popBackStack()
         }
         Log.d("test", inventory.toString())
     }
@@ -76,6 +78,10 @@ class AddItemFragment : Fragment() {
                 binding.btGuardarItem.isEnabled = isListFull
             }
         }
+    }
+    private fun regresarFragment(){
+        val toolbar = requireView().findViewById<Toolbar>(R.id.toolbarBase)
+        toolbar.setNavigationOnClickListener { findNavController().popBackStack() }
     }
 
 }
