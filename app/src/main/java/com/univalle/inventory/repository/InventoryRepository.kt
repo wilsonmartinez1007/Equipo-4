@@ -29,6 +29,10 @@ class InventoryRepository(context: Context) {
     suspend fun getListInventory(): List<Inventory> =
         withContext(Dispatchers.IO) { inventoryDao.getAllInventories() }
 
+    suspend fun getInventoryById(itemId: Int): Inventory? =
+        withContext(Dispatchers.IO) { inventoryDao.getInventoryById(itemId) }
+    fun observeInventories(): LiveData<List<Inventory>> =
+        inventoryDao.observeInventories()
     // (Opcional) eliminar por id
     suspend fun deleteById(itemId: Int) =
         withContext(Dispatchers.IO) { inventoryDao.deleteInventoryById(itemId) }

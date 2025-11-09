@@ -41,4 +41,6 @@ interface InventoryDao {
     @Query("SELECT * FROM inventory_table ORDER BY id DESC")
     fun observeInventories(): LiveData<List<Inventory>>
 
+
+
 }
