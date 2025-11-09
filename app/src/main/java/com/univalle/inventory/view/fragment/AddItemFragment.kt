@@ -12,7 +12,8 @@ import androidx.fragment.app.viewModels
 import com.univalle.inventory.model.Inventory
 import com.univalle.inventory.databinding.FragmentAddItemBinding
 import com.univalle.inventory.viewmodel.InventoryViewModel
-
+import com.univalle.inventory.R
+import androidx.appcompat.widget.Toolbar
 
 class AddItemFragment : Fragment() {
 
@@ -30,6 +31,8 @@ class AddItemFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?){
         super.onViewCreated(view, savedInstanceState)
         controladores()
+        val toolbar = requireView().findViewById<Toolbar>(R.id.toolbarBase)
+        toolbar.title = "Agregar Producto"
     }
 
     //llamamos los metodos

@@ -6,44 +6,35 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".view.fragment.AddItemFragment"
+        tools:context=".view.fragment.EditItemFragment"
         android:background="@color/blackItemFragments">
         <!--incluimos toolbar-->
         <include
             layout="@layout/toolbar"
             android:id="@+id/toolbar"
             />
-        <!--Campos que recibe el codigo del producto con los criterios cumplidos-->
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/txCodigoProducto"
+        <!-- ID -->
+        <TextView
+            android:id="@+id/tv_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            android:text="Id: "
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
-            android:layout_marginTop="50sp"
-            android:hint="Codigó producto"
-            android:textColorHint="@color/white"
-            >
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/inputCodigoProducto"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:maxLength="4"
-                >
-            </com.google.android.material.textfield.TextInputEditText>
-        <!--Campos que recibe el nombre del producto con los criterios cumplidos-->
-        </com.google.android.material.textfield.TextInputLayout>
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:layout_marginTop="10sp"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            />
+
+            <!--Campos que recibe el nombre del producto con los criterios cumplidos-->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/txNombreProducto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/txCodigoProducto"
+            app:layout_constraintTop_toBottomOf="@+id/tv_id"
             android:layout_marginTop="15dp"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
@@ -56,6 +47,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:maxLength="40"
+                android:textColor="@color/white"
                 >
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
@@ -79,6 +71,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:maxLength="20"
+                android:textColor="@color/white"
                 >
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
@@ -102,6 +95,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:maxLength="4"
+                android:textColor="@color/white"
                 >
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
@@ -117,8 +111,8 @@
             android:layout_marginTop="45dp"
             android:layout_marginEnd="15dp"
             android:backgroundTint="@color/naranja"
-            android:text="Guardar"
-            android:textColor="@color/grisToolbar"
+            android:text="Editar"
+            android:textColor="@color/white"
             android:textStyle="bold"
             android:enabled="false"/>
     </androidx.constraintlayout.widget.ConstraintLayout>

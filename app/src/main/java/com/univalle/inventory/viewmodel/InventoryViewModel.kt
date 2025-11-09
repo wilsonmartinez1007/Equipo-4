@@ -46,4 +46,18 @@ class InventoryViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    // Nueva función para obtener un producto por ID
+    fun getInventoryById(itemId: Int): LiveData<Inventory?> {
+        val inventoryLiveData = MutableLiveData<Inventory?>()
+        viewModelScope.launch {
+            try {
+                val inventory = inventoryRepository.getInventoryById(itemId)
+                inventoryLiveData.postValue(inventory)
+            } catch (e: Exception) {
+                inventoryLiveData.postValue(null)
+            }
+        }
+        return inventoryLiveData
+    }
 }
+

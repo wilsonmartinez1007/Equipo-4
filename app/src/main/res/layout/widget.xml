@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    android:background="@drawable/app_widget_background"
+    android:padding="16dp">
+
+    <!-- LOGO (Criterio 2) - Parte superior izquierda -->
+    <ImageView
+        android:id="@+id/ivAppLogo"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="3dp"
+        android:layout_marginTop="10dp"
+        android:contentDescription="@string/logo_inventory"
+        android:src="@mipmap/ic_launcher_foreground" />
+
+    <!-- TEXTO "INVENTORY" (Criterio 3) - Debajo del logo, naranja -->
+    <TextView
+        android:id="@+id/tvInventory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ivAppLogo"
+        android:layout_alignStart="@id/ivAppLogo"
+        android:layout_marginTop="4dp"
+        android:text="@string/inventory"
+        android:textColor="#E7522D"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <!-- ICONO OJO (Criterio 6) - Parte superior derecha, blanco -->
+    <ImageView
+        android:id="@+id/ivEye"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="3dp"
+        android:contentDescription="@string/mostrar_ocultar_saldo"
+        android:src="@drawable/eye_open" />
+
+    <!-- TEXTO PREGUNTA (Criterio 4) - Superior derecha, blanco -->
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/ivAppLogo"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toStartOf="@id/ivEye"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="30dp"
+        android:gravity="end"
+        android:text="@string/cu_nto_tengo_de_inventario"
+        android:textColor="@android:color/white"
+        android:textSize="14sp" />
+
+    <!-- SALDO (Criterio 5, 7, 9, 10) - Alineado a la derecha -->
+    <TextView
+        android:id="@+id/tvBalance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvTitle"
+        android:layout_marginTop="5dp"
+        android:gravity="end"
+        android:layout_marginEnd="10dp"
+        android:text="@string/oculto"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <!-- BOTÓN GESTIONAR (Criterio 11, 12, 13) - Inferior derecha -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvBalance"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="3dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tvManage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="3dp"
+            android:text="@string/gestionar_inventario"
+            android:textColor="@android:color/white"
+            android:textSize="14sp" />
+
+        <ImageView
+            android:id="@+id/ivSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:contentDescription="@string/ir_a_configuraci_n"
+            android:src="@drawable/ic_manager" />
+    </LinearLayout>
+
+</RelativeLayout>

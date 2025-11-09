@@ -22,6 +22,7 @@ class InventoryRepository(context: Context) {
         }
     }
 
+
     // HU 3.0: obtener la lista para el Home
     suspend fun getListInventory(): List<Inventory> =
         withContext(Dispatchers.IO) { inventoryDao.getAllInventories() }
@@ -33,4 +34,15 @@ class InventoryRepository(context: Context) {
     // (Opcional) eliminar por id
     suspend fun deleteById(itemId: Int) =
         withContext(Dispatchers.IO) { inventoryDao.deleteInventoryById(itemId) }
+
+
+    // Obtener producto por ID
+    suspend fun getInventoryById(itemId: Int): Inventory? {
+        return try {
+            inventoryDao.getInventoryById(itemId)
+        } catch (e: Exception) {
+            null
+        }
+    }
 }
+
