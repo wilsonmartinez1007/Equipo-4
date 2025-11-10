@@ -7,61 +7,39 @@ import com.univalle.inventory.repository.InventoryRepository
 import kotlinx.coroutines.launch
 
 class InventoryViewModel(application: Application) : AndroidViewModel(application) {
-
     private val repository = InventoryRepository(getApplication())
 
-
-    private val _listInventory = MutableLiveData<List<Inventory>>(emptyList())
-    //LiveData que se actualiza solo
+    // Se actualiza solo cuando Room cambie la tabla
     val listInventory: LiveData<List<Inventory>> = repository.observeInventories()
 
-    // Loader
     private val _progressState = MutableLiveData(false)
     val progressState: LiveData<Boolean> = _progressState
 
-    /** Carga la lista desde Room */
     fun getListInventory() {
+        // Opcional (solo para mostrar loader breve en la 1ª carga)
         viewModelScope.launch {
             _progressState.value = true
-            try {
-                val data = repository.getListInventory().toList()
-                _listInventory.value = data
-            } catch (_: Exception) {
-                _listInventory.value = emptyList()
-            } finally {
-                _progressState.value = false
-            }
+            try { repository.getListInventory() } finally { _progressState.value = false }
         }
     }
 
-
-    /** Guardar (HU 4.0) */
     fun saveInventory(inventory: Inventory, message: (String) -> Unit) {
         viewModelScope.launch {
             _progressState.value = true
-            try {
-                repository.saveInventory(inventory, message)
-                // refrescar lista si hace falta:
-                _listInventory.value = repository.getListInventory()
-            } finally {
-                _progressState.value = false
-            }
+            try { repository.saveInventory(inventory, message) }
+            finally { _progressState.value = false }
         }
     }
 
-    // Nueva función para obtener un producto por ID
     fun getInventoryById(itemId: Int): LiveData<Inventory?> {
         val out = MutableLiveData<Inventory?>()
         viewModelScope.launch {
-            try {
-                val inventory = repository.getInventoryById(itemId)
-                out.postValue(inventory)
-            } catch (_: Exception) {
-                out.postValue(null)
-            }
+            out.postValue(repository.getInventoryById(itemId))
         }
         return out
     }
-
 }
+
+
+
 
