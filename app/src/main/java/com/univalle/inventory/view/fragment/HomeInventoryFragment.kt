@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.univalle.inventory.R
@@ -15,6 +16,9 @@ import com.univalle.inventory.databinding.FragmentHomeInventoryBinding
 import com.univalle.inventory.utils.SessionManager
 import com.univalle.inventory.view.adapter.InventoryAdapter
 import com.univalle.inventory.viewmodel.InventoryViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.math.max
 
 class HomeInventoryFragment : Fragment() {
 
@@ -23,6 +27,10 @@ class HomeInventoryFragment : Fragment() {
 
     private val inventoryViewModel: InventoryViewModel by viewModels()
     private lateinit var adapterInventory: InventoryAdapter
+
+    // Control del tiempo mínimo de loader
+    private var loadStartMs: Long = 0L
+    private val minLoaderMillis = 100L
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,15 +61,26 @@ class HomeInventoryFragment : Fragment() {
             adapter = adapterInventory
         }
 
-        // Observers
+        // Observers (con espera para cumplir el mínimo de 2s)
         inventoryViewModel.listInventory.observe(viewLifecycleOwner) { list ->
-            adapterInventory.replaceAll(list)
-            binding.recyclerViewInventario.isVisible = list.isNotEmpty()
+            val elapsed = System.currentTimeMillis() - loadStartMs
+            val remaining = max(0L, minLoaderMillis - elapsed)
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(remaining)
+                adapterInventory.replaceAll(list)
+                binding.progressCircular.isVisible = false
+                binding.recyclerViewInventario.isVisible = list.isNotEmpty()
+            }
         }
 
         inventoryViewModel.progressState.observe(viewLifecycleOwner) { loading ->
-            binding.progressCircular.isVisible = loading
-            if (loading) binding.recyclerViewInventario.isVisible = false
+            // Mantén el loader visible si loading=true. La ocultación final la hace el observer
+            // tras respetar el mínimo de 2s.
+            if (loading) {
+                binding.progressCircular.isVisible = true
+                binding.recyclerViewInventario.isVisible = false
+            }
         }
 
         // FAB → Agregar producto
@@ -69,20 +88,22 @@ class HomeInventoryFragment : Fragment() {
             findNavController().navigate(R.id.action_homeInventoryFragment_to_addItemFragment)
         }
 
-        // Primera carga
-        inventoryViewModel.getListInventory()
+        // Primera carga con mínimo de 2s
+        startMinLoadAndFetch()
     }
 
     override fun onResume() {
         super.onResume()
-        inventoryViewModel.getListInventory()
-
-        // Ajuste defensivo de visibilidad por si el observer aún no disparó
-        val hasItems = ::adapterInventory.isInitialized && adapterInventory.itemCount > 0
-        binding.recyclerViewInventario.isVisible = hasItems
-        binding.progressCircular.isVisible = false
+        // Cada vez que regreses al Home, vuelve a aplicar el mínimo de 2s
+        startMinLoadAndFetch()
     }
 
+    private fun startMinLoadAndFetch() {
+        loadStartMs = System.currentTimeMillis()
+        binding.progressCircular.isVisible = true
+        binding.recyclerViewInventario.isVisible = false
+        inventoryViewModel.getListInventory()
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

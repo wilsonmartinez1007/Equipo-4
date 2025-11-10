@@ -12,6 +12,7 @@
     <!-- Imagen superior centrada -->
 
     <!-- Título "Inventory" centrado y en color naranja -->
+
     <ImageView
         android:id="@+id/imgLogo"
         android:layout_width="250dp"
