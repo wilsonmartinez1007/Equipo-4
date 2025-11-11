@@ -41,6 +41,16 @@ interface InventoryDao {
     @Query("SELECT * FROM inventory_table ORDER BY id DESC")
     fun observeInventories(): LiveData<List<Inventory>>
 
+    // Obtener cantidad
+    @Query("SELECT quantity FROM inventory_table WHERE id = :id LIMIT 1")
+    suspend fun getCantidad(id: Int): Int?
+    // Obtener Nombre
+    @Query("SELECT name FROM inventory_table WHERE id = :id LIMIT 1")
+    suspend fun getName(id: Int): String?
+    // Obtener cantidad
+    @Query("SELECT price FROM inventory_table WHERE id = :id LIMIT 1")
+    suspend fun getPrecio(id: Int): Int?
+
 
 
 }
