@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/login_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#2B2B2B"
+    tools:context=".ui.login.LoginActivity">
+
+    <!-- Imagen superior centrada -->
+
+    <!-- Título "Inventory" centrado y en color naranja -->
+
+    <ImageView
+        android:id="@+id/imgLogo"
+        android:layout_width="250dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="116dp"
+        android:layout_marginEnd="80dp"
+        android:contentDescription="@string/logo_desc"
+        android:scaleType="centerCrop"
+        android:src="@drawable/inventory_widget"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvInventoryTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:fontFamily="@font/archivo_black_regular"
+        android:text="@string/inventory"
+        android:textColor="#E7522E"
+        android:textSize="40sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/imgLogo" />
+
+    <!-- Animación Lottie de huella digitalL -->
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieLogin"
+        android:layout_width="280dp"
+        android:layout_height="280dp"
+        android:layout_marginTop="60dp"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/finger"
+        app:layout_constraintTop_toBottomOf="@id/tvInventoryTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.3" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

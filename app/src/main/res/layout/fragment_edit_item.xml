@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <!--Usamos constrainLayout-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".view.fragment.EditItemFragment"
+        android:background="@color/blackItemFragments">
+        <!--incluimos toolbar-->
+        <include
+            layout="@layout/toolbar"
+            android:id="@+id/toolbar"
+            />
+        <!-- ID -->
+        <TextView
+            android:id="@+id/tv_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Id: "
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:layout_marginTop="10sp"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            />
+
+        <!--Campos que recibe el nombre del producto con los criterios cumplidos-->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/txNombreProducto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_id"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:hint="Nombre artículo"
+            android:textColorHint="@color/white"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="@color/white"
+            app:hintTextColor="@color/white"
+            >
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/inputNombreProducto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:maxLength="40"
+                android:textColor="@color/white"
+                >
+            </com.google.android.material.textfield.TextInputEditText>
+        </com.google.android.material.textfield.TextInputLayout>
+        <!--Campos que recibe el precio del producto con los criterios cumplidos-->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/txPrecioProducto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txNombreProducto"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:hint="Precio"
+            android:textColorHint="@color/white"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="@color/white"
+            app:hintTextColor="@color/white"
+            >
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/inputPrecioProducto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLength="20"
+                android:textColor="@color/white"
+                >
+            </com.google.android.material.textfield.TextInputEditText>
+        </com.google.android.material.textfield.TextInputLayout>
+        <!--Campos que recibe la cantidad del producto con los criterios cumplidos-->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/txCantidadArticulos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txPrecioProducto"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:hint="Cantidad"
+            android:textColorHint="@color/white"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="@color/white"
+            app:hintTextColor="@color/white"
+            >
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/inputCantidadArticulos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLength="4"
+                android:textColor="@color/white"
+                >
+            </com.google.android.material.textfield.TextInputEditText>
+        </com.google.android.material.textfield.TextInputLayout>
+        <!--Boton que permite guardar el producto con los criterios cumplidos-->
+        <Button
+            android:id="@+id/btGuardarItem"
+            android:layout_width="match_parent"
+            android:layout_height="59dp"
+            android:layout_marginStart="15dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txCantidadArticulos"
+            android:layout_marginTop="45dp"
+            android:layout_marginEnd="15dp"
+            android:backgroundTint="@color/naranja"
+            android:text="Editar"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:enabled="false"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

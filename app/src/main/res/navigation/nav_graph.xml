@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeInventoryFragment">
+
+    <fragment
+        android:id="@+id/homeInventoryFragment"
+        android:name="com.univalle.inventory.view.fragment.HomeInventoryFragment"
+        android:label="Inventario"
+        tools:layout="@layout/fragment_home_inventory">
+
+        <action
+            android:id="@+id/action_homeInventoryFragment_to_addItemFragment"
+            app:destination="@id/addItemFragment" />
+
+        <action
+            android:id="@+id/action_homeInventoryFragment_to_productDetailFragment"
+            app:destination="@id/productDetailFragment" />
+        <action
+            android:id="@+id/action_homeInventoryFragment_self"
+            app:destination="@id/homeInventoryFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addItemFragment"
+        android:name="com.univalle.inventory.view.fragment.AddItemFragment"
+        android:label="Agregar producto"
+        tools:layout="@layout/fragment_add_item" />
+
+    <fragment
+        android:id="@+id/productDetailFragment"
+        android:name="com.univalle.inventory.view.fragment.ProductDetailFragment"
+        android:label="Detalle"
+        tools:layout="@layout/fragment_product_detail">
+        <argument
+            android:name="productId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_productDetailFragment_to_editItemFragment"
+            app:destination="@id/editItemFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editItemFragment"
+        android:name="com.univalle.inventory.view.fragment.EditItemFragment"
+        android:label="EditItemFragment"
+        tools:layout="@layout/fragment_add_item"/>
+</navigation>
