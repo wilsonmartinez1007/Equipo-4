@@ -24,8 +24,11 @@
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
             android:layout_marginTop="50sp"
-            android:hint="Codigó producto"
+            android:hint="Código producto"
             android:textColorHint="@color/white"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="@color/white"
+            app:hintTextColor="@color/white"
             >
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/inputCodigoProducto"
@@ -33,6 +36,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:maxLength="4"
+                android:textColor="@color/white"
                 >
             </com.google.android.material.textfield.TextInputEditText>
         <!--Campos que recibe el nombre del producto con los criterios cumplidos-->
@@ -47,8 +51,11 @@
             android:layout_marginTop="15dp"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
-            android:hint="Nombre producto"
+            android:hint="Nombre artículo"
             android:textColorHint="@color/white"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="@color/white"
+            app:hintTextColor="@color/white"
             >
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/inputNombreProducto"
@@ -56,6 +63,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:maxLength="40"
+                android:textColor="@color/white"
                 >
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
@@ -70,8 +78,11 @@
             android:layout_marginTop="15dp"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
-            android:hint="Precio producto"
+            android:hint="Precio"
             android:textColorHint="@color/white"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="@color/white"
+            app:hintTextColor="@color/white"
             >
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/inputPrecioProducto"
@@ -79,6 +90,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:maxLength="20"
+                android:textColor="@color/white"
                 >
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
@@ -95,6 +107,9 @@
             android:layout_marginEnd="15dp"
             android:hint="Cantidad"
             android:textColorHint="@color/white"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="@color/white"
+            app:hintTextColor="@color/white"
             >
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/inputCantidadArticulos"
@@ -102,6 +117,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="number"
                 android:maxLength="4"
+                android:textColor="@color/white"
                 >
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
@@ -119,6 +135,7 @@
             android:backgroundTint="@color/naranja"
             android:text="Guardar"
             android:textColor="@color/grisToolbar"
+            android:textSize="20dp"
             android:textStyle="bold"
             android:enabled="false"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
