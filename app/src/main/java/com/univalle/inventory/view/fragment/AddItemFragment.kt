@@ -15,6 +15,7 @@ import com.univalle.inventory.viewmodel.InventoryViewModel
 import com.univalle.inventory.R
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.fragment.findNavController
+import androidx.core.content.ContextCompat
 
 class AddItemFragment : Fragment() {
 
@@ -43,6 +44,7 @@ class AddItemFragment : Fragment() {
         binding.btGuardarItem.setOnClickListener {
             getDataInventario()
         }
+
     }
 
     //recibimos los datos digitado en los campos de nuestro fragment y le
@@ -75,13 +77,23 @@ class AddItemFragment : Fragment() {
                 val isListFull = listEditText.all{
                     it.text.toString().isNotEmpty()
                 }
-                binding.btGuardarItem.isEnabled = isListFull
+                actualizarBoton(isListFull) { color ->
+                    binding.btGuardarItem.apply {
+                        isEnabled = isListFull
+                        setTextColor(ContextCompat.getColor(requireContext(), color))
+                    }
+                }
+
             }
         }
     }
     private fun regresarFragment(){
         val toolbar = requireView().findViewById<Toolbar>(R.id.toolbarBase)
         toolbar.setNavigationOnClickListener { findNavController().popBackStack() }
+    }
+    private fun actualizarBoton(estado: Boolean, accion: (Int) -> Unit) {
+        val color = if (estado) R.color.white else R.color.grisToolbar
+        accion(color)
     }
 
 }

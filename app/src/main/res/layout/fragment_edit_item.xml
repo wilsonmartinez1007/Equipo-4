@@ -27,7 +27,7 @@
             app:layout_constraintTop_toBottomOf="@+id/toolbar"
             />
 
-            <!--Campos que recibe el nombre del producto con los criterios cumplidos-->
+        <!--Campos que recibe el nombre del producto con los criterios cumplidos-->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/txNombreProducto"
             android:layout_width="match_parent"
@@ -38,8 +38,11 @@
             android:layout_marginTop="15dp"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
-            android:hint="Nombre producto"
+            android:hint="Nombre artículo"
             android:textColorHint="@color/white"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="@color/white"
+            app:hintTextColor="@color/white"
             >
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/inputNombreProducto"
@@ -62,8 +65,11 @@
             android:layout_marginTop="15dp"
             android:layout_marginStart="15dp"
             android:layout_marginEnd="15dp"
-            android:hint="Precio producto"
+            android:hint="Precio"
             android:textColorHint="@color/white"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="@color/white"
+            app:hintTextColor="@color/white"
             >
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/inputPrecioProducto"
@@ -88,6 +94,9 @@
             android:layout_marginEnd="15dp"
             android:hint="Cantidad"
             android:textColorHint="@color/white"
+            app:boxBackgroundMode="outline"
+            app:boxStrokeColor="@color/white"
+            app:hintTextColor="@color/white"
             >
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/inputCantidadArticulos"
