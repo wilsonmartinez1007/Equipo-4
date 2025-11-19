@@ -38,6 +38,18 @@ class InventoryViewModel(application: Application) : AndroidViewModel(applicatio
         }
         return out
     }
+
+    fun deleteInventoryById(itemId: Int, onSuccess: () -> Unit = {}) {
+        viewModelScope.launch {
+            _progressState.value = true
+            try {
+                repository.deleteById(itemId)
+                onSuccess()
+            } finally {
+                _progressState.value = false
+            }
+        }
+    }
 }
 
 
