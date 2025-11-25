@@ -26,6 +26,7 @@ class InventoryRepository(context: Context) {
     }
 
     // HU 3.0: lista para el Home
+
     suspend fun getListInventory(): List<Inventory> =
         withContext(Dispatchers.IO) { inventoryDao.getAllInventories() }
 
