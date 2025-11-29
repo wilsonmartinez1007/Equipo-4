@@ -106,5 +106,5 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx:25.0.0")
 
     // BOM COMENTADO TEMPORALMENTE:
-    // implementation(platform("com.google.firebase:firebase-bom:34.6.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.6.0"))
 }

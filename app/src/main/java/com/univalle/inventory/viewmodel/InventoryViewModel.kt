@@ -5,6 +5,8 @@ import androidx.lifecycle.*
 import com.univalle.inventory.model.Inventory
 import com.univalle.inventory.repository.InventoryRepository
 import kotlinx.coroutines.launch
+import com.univalle.inventory.ui.model.UserRequest
+import com.univalle.inventory.ui.model.UserResponse
 
 class InventoryViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = InventoryRepository(getApplication())
@@ -14,6 +16,17 @@ class InventoryViewModel(application: Application) : AndroidViewModel(applicatio
 
     private val _progressState = MutableLiveData(false)
     val progressState: LiveData<Boolean> = _progressState
+
+    private val _isRegister = MutableLiveData<UserResponse>()
+    val isRegister: LiveData<UserResponse> = _isRegister
+    fun registerUser(userRequest: UserRequest) {
+        viewModelScope.launch {
+            repository.registerUser(userRequest){ userResponse ->
+                _isRegister.value = userResponse
+            }
+        }
+    }
+
 
     fun getListInventory() {
         // Opcional (solo para mostrar loader breve en la 1ª carga)
