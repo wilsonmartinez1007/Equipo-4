@@ -2,6 +2,7 @@ package com.univalle.inventory.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.*
+import com.google.firebase.auth.FirebaseAuth
 import com.univalle.inventory.model.Inventory
 import com.univalle.inventory.repository.InventoryRepository
 import kotlinx.coroutines.launch
@@ -24,6 +25,12 @@ class InventoryViewModel(application: Application) : AndroidViewModel(applicatio
             repository.registerUser(userRequest){ userResponse ->
                 _isRegister.value = userResponse
             }
+        }
+    }
+
+    fun loginUser(email: String, password: String, isLogin: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            repository.loginUser(email, password, isLogin)
         }
     }
 

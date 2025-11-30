@@ -18,6 +18,23 @@ class InventoryRepository(context: Context) {
 
 
     private val firebaseAuth = FirebaseAuth.getInstance()
+
+
+    suspend fun loginUser(email: String, password: String, isLogin: (Boolean)-> Unit){
+        if (email.isNotEmpty() && password.isNotEmpty()){
+            FirebaseAuth.getInstance()
+                .signInWithEmailAndPassword(email,password)
+                .addOnCompleteListener {
+                    if (it.isSuccessful){
+                        isLogin(true)
+                    }else{
+                        isLogin(false)
+                    }
+                }
+        }else {
+            isLogin(false)
+        }
+    }
     suspend fun registerUser(userRequest: UserRequest, userResponse: (UserResponse) -> Unit){
         withContext(Dispatchers.IO){
             try{

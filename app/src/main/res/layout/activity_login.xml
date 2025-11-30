@@ -70,7 +70,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number"
-                android:maxLength="40"
+                android:maxLength="10"
                 android:textColor="@color/white">
 
             </com.google.android.material.textfield.TextInputEditText>
@@ -107,7 +107,8 @@
             android:text="Registrarse"
             android:textColor="@color/gris"
             android:textSize="20sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:enabled="false"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
