@@ -28,9 +28,9 @@ class HomeInventoryFragment : Fragment() {
     private val inventoryViewModel: InventoryViewModel by viewModels()
     private lateinit var adapterInventory: InventoryAdapter
 
-    // Control del tiempo mínimo de loader
+    // Control del tiempo mínimo de loader (2 segundos)
     private var loadStartMs: Long = 0L
-    private val minLoaderMillis = 100L
+    private val minLoaderMillis = 2000L
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,8 +44,21 @@ class HomeInventoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Toolbar (incluida desde toolbar_home.xml)
-        binding.toolbarHome.toolbarInventario.title = getString(R.string.app_name)
+        //  Verificar sesión: si NO hay sesión, mandar a Login y cerrar esta Activity
+        val session = SessionManager(requireContext())
+        if (!session.isLoggedIn()) {
+            startActivity(
+                Intent(
+                    requireContext(),
+                    com.univalle.inventory.ui.login.LoginActivity::class.java
+                )
+            )
+            requireActivity().finishAffinity()
+            return
+        }
+
+        // Toolbar con título "Inventario" y botón logout
+        binding.toolbarHome.toolbarInventario.title = "Inventario"
         binding.toolbarHome.btnLogout.setOnClickListener {
             SessionManager(requireContext()).clear()
             startActivity(
@@ -61,7 +74,7 @@ class HomeInventoryFragment : Fragment() {
             adapter = adapterInventory
         }
 
-        // Observers (con espera para cumplir el mínimo de 2s)
+        // Observers con espera para cumplir el mínimo de 2s de loader
         inventoryViewModel.listInventory.observe(viewLifecycleOwner) { list ->
             val elapsed = System.currentTimeMillis() - loadStartMs
             val remaining = max(0L, minLoaderMillis - elapsed)
@@ -75,8 +88,6 @@ class HomeInventoryFragment : Fragment() {
         }
 
         inventoryViewModel.progressState.observe(viewLifecycleOwner) { loading ->
-            // Mantén el loader visible si loading=true. La ocultación final la hace el observer
-            // tras respetar el mínimo de 2s.
             if (loading) {
                 binding.progressCircular.isVisible = true
                 binding.recyclerViewInventario.isVisible = false
@@ -89,12 +100,6 @@ class HomeInventoryFragment : Fragment() {
         }
 
         // Primera carga con mínimo de 2s
-        startMinLoadAndFetch()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        // Cada vez que regreses al Home, vuelve a aplicar el mínimo de 2s
         startMinLoadAndFetch()
     }
 
