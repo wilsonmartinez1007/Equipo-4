@@ -50,6 +50,7 @@ class LoginActivity : AppCompatActivity() {
             if (userResponse.isRegister){
                 Toast.makeText(this, userResponse.message, Toast.LENGTH_SHORT).show()
                 sharedPreferences.edit().putString("email", userResponse.email).apply()
+                session.setLoggedIn(true)
                 goToHome()
             } else {
                 Toast.makeText(this, userResponse.message, Toast.LENGTH_SHORT).show()
@@ -84,6 +85,7 @@ class LoginActivity : AppCompatActivity() {
         inventoryViewModel.loginUser(email,password){ isLogin ->
             if (isLogin){
                 sharedPreferences.edit().putString("email",email).apply()
+                session.setLoggedIn(true)
                 goToHome()
             }else{
                 Toast.makeText(this, "Login incorrecto", Toast.LENGTH_SHORT).show()
