@@ -2,6 +2,12 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
+
+    id("com.google.dagger.hilt.android")
+    id("org.jetbrains.kotlin.kapt")   // el ÚNICO kapt válido
+
+    // Plugin de Google Services para Firebase
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -27,14 +33,17 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
-    buildFeatures{
+
+    buildFeatures {
         viewBinding = true
         dataBinding = true
     }
@@ -42,11 +51,13 @@ android {
 
 dependencies {
     val navVersion = "2.3.5"
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -54,9 +65,9 @@ dependencies {
     implementation("com.airbnb.android:lottie:6.4.0")
     implementation("androidx.biometric:biometric:1.2.0-alpha05")
 
-    implementation("androidx.navigation:navigation-fragment-ktx:${navVersion}")
-    implementation("androidx.navigation:navigation-ui-ktx:${navVersion}")
-    implementation("androidx.navigation:navigation-common:${navVersion}")
+    implementation("androidx.navigation:navigation-fragment-ktx:$navVersion")
+    implementation("androidx.navigation:navigation-ui-ktx:$navVersion")
+    implementation("androidx.navigation:navigation-common:$navVersion")
 
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("androidx.recyclerview:recyclerview:1.3.1")
@@ -69,12 +80,31 @@ dependencies {
 
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.1")
 
+    // ROOM
     implementation("androidx.room:room-runtime:2.5.2")
     implementation("androidx.room:room-ktx:2.5.2")
     ksp("androidx.room:room-compiler:2.5.2")
 
-    implementation("com.getbase:floatingactionbutton:1.10.1")
+    // RETROFIT
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // Glide
     implementation("com.github.bumptech.glide:glide:4.12.0")
+
+    // FAB
+    implementation("com.getbase:floatingactionbutton:1.10.1")
+
+    // HILT
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
+
+    // DEPENDENCIAS DE FIREBASE (VERSIONES EXPLÍCITAS - SIN BOM)
+    implementation("com.google.firebase:firebase-auth:23.0.0")
+    implementation("com.google.firebase:firebase-auth-ktx:23.0.0")
+    implementation("com.google.firebase:firebase-firestore:25.0.0")
+    implementation("com.google.firebase:firebase-firestore-ktx:25.0.0")
+
+    // BOM COMENTADO TEMPORALMENTE:
+    implementation(platform("com.google.firebase:firebase-bom:34.6.0"))
 }

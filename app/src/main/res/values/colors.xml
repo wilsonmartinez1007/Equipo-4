@@ -3,6 +3,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <!--Color gris  para bt register -->
+    <color name="gris">#808080</color>
+
     <!--Color negro para el fondo de la ventana como se requiere en los criterios-->
     <color name="blackItemFragments">#CC000000</color>
 
