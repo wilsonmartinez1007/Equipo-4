@@ -4,12 +4,14 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.firestore.FirebaseFirestore
 import com.univalle.inventory.data.InventoryDB
 import com.univalle.inventory.data.InventoryDao
 import com.univalle.inventory.model.Inventory
 import com.univalle.inventory.ui.model.UserRequest
 import com.univalle.inventory.ui.model.UserResponse
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
 class InventoryRepository(context: Context) {
@@ -19,6 +21,9 @@ class InventoryRepository(context: Context) {
 
     private val firebaseAuth = FirebaseAuth.getInstance()
 
+    //FIRESTORE
+    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private val collectionRef = firestore.collection("products")
 
     suspend fun loginUser(email: String, password: String, isLogin: (Boolean)-> Unit){
         if (email.isNotEmpty() && password.isNotEmpty()){
@@ -96,6 +101,31 @@ class InventoryRepository(context: Context) {
 
     suspend fun getListInventory(): List<Inventory> =
         withContext(Dispatchers.IO) { inventoryDao.getAllInventories() }
+
+    // Obtener por ID desde FIRESTORE
+    suspend fun getInventoryByIdFromFirestore(itemId: Int): Inventory? =
+        withContext(Dispatchers.IO) {
+            try {
+                val snapshot = collectionRef.document(itemId.toString()).get().await()
+                snapshot.toObject(Inventory::class.java)
+            } catch (e: Exception) {
+                null
+            }
+        }
+
+    // Actualizar en FIRESTORE
+    suspend fun updateInventoryInFirestore(inventory: Inventory, messageResponse: (String) -> Unit) {
+        try {
+            withContext(Dispatchers.IO) {
+                collectionRef.document(inventory.id.toString())
+                    .set(inventory)
+                    .await()
+            }
+            messageResponse("Producto actualizado con éxito")
+        } catch (e: Exception) {
+            messageResponse("Error al actualizar: ${e.message}")
+        }
+    }
 
     suspend fun getInventoryById(itemId: Int): Inventory? =
         withContext(Dispatchers.IO) { inventoryDao.getInventoryById(itemId) }

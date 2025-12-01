@@ -49,7 +49,7 @@ class EditItemFragment : Fragment() {
 
     // Cargar datos desde la base de datos
     private fun cargarDatosItem(itemId: Int) {
-        inventoryViewModel.getInventoryById(itemId).observe(viewLifecycleOwner) { inventory ->
+        inventoryViewModel.getInventoryByIdFromFirestore(itemId).observe(viewLifecycleOwner) { inventory ->
             inventory?.let {
                 // Guardar el ID actual
                 currentProductId = it.id
@@ -101,7 +101,7 @@ class EditItemFragment : Fragment() {
             price = precioProducto,
             quantity = cantidadArticulos)
 
-        inventoryViewModel.saveInventory(inventory){ message ->
+        inventoryViewModel.updateInventoryInFirestore(inventory){ message ->
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             // Navegar de regreso después de actualizar
             findNavController().navigateUp()

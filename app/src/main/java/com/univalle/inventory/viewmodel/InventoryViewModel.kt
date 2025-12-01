@@ -59,6 +59,25 @@ class InventoryViewModel(application: Application) : AndroidViewModel(applicatio
         return out
     }
 
+    // Obtener item por ID desde FIRESTORE
+    fun getInventoryByIdFromFirestore(itemId: Int): LiveData<Inventory?> {
+        val out = MutableLiveData<Inventory?>()
+        viewModelScope.launch {
+            out.postValue(repository.getInventoryByIdFromFirestore(itemId))
+        }
+        return out
+    }
+
+    // Actualizar en FIRESTORE
+    fun updateInventoryInFirestore(inventory: Inventory, message: (String) -> Unit) {
+        viewModelScope.launch {
+            _progressState.value = true
+            try { repository.updateInventoryInFirestore(inventory, message) }
+            finally { _progressState.value = false }
+        }
+    }
+
+
     fun deleteInventoryById(itemId: Int, onSuccess: () -> Unit = {}) {
         viewModelScope.launch {
             _progressState.value = true
