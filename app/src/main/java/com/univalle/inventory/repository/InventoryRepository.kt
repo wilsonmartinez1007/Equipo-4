@@ -1,6 +1,7 @@
 package com.univalle.inventory.repository
 
 import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
@@ -14,10 +15,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
+
 class InventoryRepository(context: Context) {
 
     private val inventoryDao: InventoryDao = InventoryDB.getDatabase(context).inventoryDao()
-
 
     private val firebaseAuth = FirebaseAuth.getInstance()
 
@@ -89,7 +90,15 @@ class InventoryRepository(context: Context) {
     suspend fun saveInventory(inventory: Inventory, messageResponse: (String) -> Unit) {
         try {
             withContext(Dispatchers.IO) {
-                inventoryDao.saveInventory(inventory)
+                //inventoryDao.saveInventory(inventory)
+                firestore.collection("products").document(inventory.id.toString()).set(
+                    hashMapOf(
+                        "id" to inventory.id,
+                        "name" to inventory.name,
+                        "price" to inventory.price,
+                        "quantity" to inventory.quantity
+                    )
+                )
             }
             messageResponse("El inventario ha sido guardado con éxito")
         } catch (e: Exception) {
