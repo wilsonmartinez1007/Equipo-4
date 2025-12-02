@@ -3,6 +3,7 @@ package com.univalle.inventory.repository
 import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.firestore.FirebaseFirestore
@@ -88,6 +89,11 @@ class InventoryRepository(context: Context) {
 
     // HU 4.0: guardar
     suspend fun saveInventory(inventory: Inventory, messageResponse: (String) -> Unit) {
+        val currentUserEmail = firebaseAuth.currentUser?.email
+        if (currentUserEmail == null) {
+            messageResponse("No hay usuario autenticado")
+            return
+        }
         try {
             withContext(Dispatchers.IO) {
                 //inventoryDao.saveInventory(inventory)
@@ -96,9 +102,11 @@ class InventoryRepository(context: Context) {
                         "id" to inventory.id,
                         "name" to inventory.name,
                         "price" to inventory.price,
-                        "quantity" to inventory.quantity
+                        "quantity" to inventory.quantity,
+                        "userEmail" to currentUserEmail
                     )
                 )
+                    .await()
             }
             messageResponse("El inventario ha sido guardado con éxito")
         } catch (e: Exception) {
@@ -106,10 +114,24 @@ class InventoryRepository(context: Context) {
         }
     }
 
-    // HU 3.0: lista para el Home
 
+    // HU 3.0: lista SOLO de productos del usuario actual
     suspend fun getListInventory(): List<Inventory> =
-        withContext(Dispatchers.IO) { inventoryDao.getAllInventories() }
+        withContext(Dispatchers.IO) {
+            val currentUserEmail = firebaseAuth.currentUser?.email
+                ?: return@withContext emptyList<Inventory>()
+
+            try {
+                val snapshot = collectionRef
+                    .whereEqualTo("userEmail", currentUserEmail)
+                    .get()
+                    .await()
+
+                snapshot.documents.mapNotNull { it.toObject(Inventory::class.java) }
+            } catch (e: Exception) {
+                emptyList()
+            }
+        }
 
     // Obtener por ID desde FIRESTORE
     suspend fun getInventoryByIdFromFirestore(itemId: Int): Inventory? =
@@ -121,6 +143,10 @@ class InventoryRepository(context: Context) {
                 null
             }
         }
+
+    // Alias para compatibilidad (ya no usamos Room)
+    suspend fun getInventoryById(itemId: Int): Inventory? =
+        getInventoryByIdFromFirestore(itemId)
 
     // Actualizar en FIRESTORE
     suspend fun updateInventoryInFirestore(inventory: Inventory, messageResponse: (String) -> Unit) {
@@ -136,11 +162,31 @@ class InventoryRepository(context: Context) {
         }
     }
 
-    suspend fun getInventoryById(itemId: Int): Inventory? =
-        withContext(Dispatchers.IO) { inventoryDao.getInventoryById(itemId) }
-    fun observeInventories(): LiveData<List<Inventory>> =
-        inventoryDao.observeInventories()
-    // (Opcional) eliminar por id
+
+    // LiveData en tiempo real (también filtrado por usuario)
+    fun observeInventories(): LiveData<List<Inventory>> {
+        val liveData = MutableLiveData<List<Inventory>>()
+
+        val currentUserEmail = firebaseAuth.currentUser?.email
+        if (currentUserEmail == null) {
+            liveData.postValue(emptyList())
+            return liveData
+        }
+
+        collectionRef
+            .whereEqualTo("userEmail", currentUserEmail)
+            .addSnapshotListener { snapshot, _ ->
+                val list = snapshot?.documents
+                    ?.mapNotNull { it.toObject(Inventory::class.java) }
+                    ?: emptyList()
+                liveData.postValue(list)
+            }
+
+        return liveData
+    }
+
+
+    // Eliminar por id en Firestore
     suspend fun deleteById(itemId: Int) =
         withContext(Dispatchers.IO) { inventoryDao.deleteInventoryById(itemId) }
 
