@@ -12,17 +12,23 @@ import com.univalle.inventory.ui.model.UserResponse
 class InventoryViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = InventoryRepository(getApplication())
 
-    // Se actualiza solo cuando Room cambie la tabla
-    val listInventory: LiveData<List<Inventory>> = repository.observeInventories()
+    // Lista que va a observar el Home
+    private val _listInventory = MutableLiveData<List<Inventory>>()
+    val listInventory: LiveData<List<Inventory>> get() = _listInventory
 
+    // Loader/progreso
     private val _progressState = MutableLiveData(false)
     val progressState: LiveData<Boolean> = _progressState
 
+    // Resultado de registro
+
     private val _isRegister = MutableLiveData<UserResponse>()
     val isRegister: LiveData<UserResponse> = _isRegister
+
+
     fun registerUser(userRequest: UserRequest) {
         viewModelScope.launch {
-            repository.registerUser(userRequest){ userResponse ->
+            repository.registerUser(userRequest) { userResponse ->
                 _isRegister.value = userResponse
             }
         }
@@ -35,19 +41,29 @@ class InventoryViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
 
+    // HU 3.0: obtener lista SOLO del usuario logueado (Firestore)
     fun getListInventory() {
-        // Opcional (solo para mostrar loader breve en la 1ª carga)
         viewModelScope.launch {
             _progressState.value = true
-            try { repository.getListInventory() } finally { _progressState.value = false }
+            try {
+                val list = repository.getListInventory()   // 👈 ya viene filtrada por userEmail
+                _listInventory.value = list
+            } catch (e: Exception) {
+                _listInventory.value = emptyList()
+            } finally {
+                _progressState.value = false
+            }
         }
     }
 
     fun saveInventory(inventory: Inventory, message: (String) -> Unit) {
         viewModelScope.launch {
             _progressState.value = true
-            try { repository.saveInventory(inventory, message) }
-            finally { _progressState.value = false }
+            try {
+                repository.saveInventory(inventory, message)
+            } finally {
+                _progressState.value = false
+            }
         }
     }
 
@@ -59,7 +75,8 @@ class InventoryViewModel(application: Application) : AndroidViewModel(applicatio
         return out
     }
 
-    // Obtener item por ID desde FIRESTORE
+        // Obtener item por ID desde FIRESTORE
+
     fun getInventoryByIdFromFirestore(itemId: Int): LiveData<Inventory?> {
         val out = MutableLiveData<Inventory?>()
         viewModelScope.launch {
@@ -67,28 +84,31 @@ class InventoryViewModel(application: Application) : AndroidViewModel(applicatio
         }
         return out
     }
-
-    // Actualizar en FIRESTORE
+        // Actualizar en FIRESTORE
+    //
     fun updateInventoryInFirestore(inventory: Inventory, message: (String) -> Unit) {
-        viewModelScope.launch {
-            _progressState.value = true
-            try { repository.updateInventoryInFirestore(inventory, message) }
-            finally { _progressState.value = false }
-        }
-    }
-
-
-    fun deleteInventoryById(itemId: Int, onSuccess: () -> Unit = {}) {
-        viewModelScope.launch {
-            _progressState.value = true
-            try {
-                repository.deleteById(itemId)
-                onSuccess()
-            } finally {
-                _progressState.value = false
+            viewModelScope.launch {
+                _progressState.value = true
+                try {
+                    repository.updateInventoryInFirestore(inventory, message)
+                } finally {
+                    _progressState.value = false
+                }
             }
         }
+
+
+    fun deleteInventoryById(itemId: Int, message: (String) -> Unit = {}) {
+            viewModelScope.launch {
+                _progressState.value = true
+                try {
+                    repository.deleteById(itemId, message)
+                } finally {
+                    _progressState.value = false
+                }
+            }
     }
+
 }
 
 
