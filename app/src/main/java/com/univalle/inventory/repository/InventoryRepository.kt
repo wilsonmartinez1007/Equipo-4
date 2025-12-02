@@ -143,15 +143,23 @@ class InventoryRepository(context: Context) {
         }
 
     // Obtener por ID desde FIRESTORE
-    suspend fun getInventoryByIdFromFirestore(itemId: Int): Inventory? =
-        withContext(Dispatchers.IO) {
+    suspend fun getInventoryByIdFromFirestore(itemId: Int): Inventory? {
+        val currentUserEmail = firebaseAuth.currentUser?.email
+        if (currentUserEmail == null) {
+            android.util.Log.e("InventoryRepo", "No hay usuario autenticado")
+            return null
+        }
+
+        return withContext(Dispatchers.IO) {
             try {
                 val snapshot = collectionRef.document(itemId.toString()).get().await()
                 snapshot.toObject(Inventory::class.java)
             } catch (e: Exception) {
+                android.util.Log.e("InventoryRepo", "Error al obtener producto: ${e.message}")
                 null
             }
         }
+    }
 
     // Alias para compatibilidad
     suspend fun getInventoryById(itemId: Int): Inventory? =
@@ -159,14 +167,28 @@ class InventoryRepository(context: Context) {
 
     // Actualizar en FIRESTORE
     suspend fun updateInventoryInFirestore(inventory: Inventory, messageResponse: (String) -> Unit) {
+        val currentUserEmail = firebaseAuth.currentUser?.email
+        if (currentUserEmail == null) {
+            messageResponse("No hay usuario autenticado")
+            return
+        }
+
         try {
             withContext(Dispatchers.IO) {
                 // Actualizar en Firestore
                 collectionRef.document(inventory.id.toString())
-                    .set(inventory)
+                    .set(
+                        hashMapOf(
+                            "id" to inventory.id,
+                            "name" to inventory.name,
+                            "price" to inventory.price,
+                            "quantity" to inventory.quantity,
+                            "userEmail" to currentUserEmail
+                        )
+                    )
                     .await()
 
-                //  Actualizar también en Room
+                // Actualizar también en Room
                 inventoryDao.update(inventory)
             }
             messageResponse("Producto actualizado con éxito")
