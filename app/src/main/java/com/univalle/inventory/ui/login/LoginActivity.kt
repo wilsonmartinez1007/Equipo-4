@@ -15,6 +15,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import com.univalle.inventory.R
 
+import android.content.res.ColorStateList
+import android.text.InputType
+import android.text.method.PasswordTransformationMethod
+
 
 class LoginActivity : AppCompatActivity() {
 
@@ -23,6 +27,10 @@ class LoginActivity : AppCompatActivity() {
 
     private val inventoryViewModel: InventoryViewModel by viewModels()
     private lateinit var sharedPreferences: SharedPreferences
+
+    private var visible = false
+    private var started = false
+    private val MIN_PASS = 6
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +47,9 @@ class LoginActivity : AppCompatActivity() {
         }
         sharedPreferences = getSharedPreferences("shared", MODE_PRIVATE)
         setup()
+        setupPasswordField()
         viewModelObserver()
+
 
     }
     private fun viewModelObserver(){
@@ -57,6 +67,7 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
+
 
     private fun setup(){
         validarDatos()
@@ -127,5 +138,42 @@ class LoginActivity : AppCompatActivity() {
         }
         startActivity(intent)
         // no hace falta finish(): CLEAR_TASK ya quita el Login de la pila
+    }
+    private fun setupPasswordField() = with(binding) {
+        txPassword.setEndIconOnClickListener { togglePass() }
+        paintPassOk()
+
+        inputPassword.addTextChangedListener {
+            val p = it?.toString().orEmpty()
+            if (p.isNotEmpty()) started = true
+            if (!started) paintPassOk() else if (p.length < MIN_PASS) paintPassError() else paintPassOk()
+        }
+    }
+
+    private fun togglePass() = with(binding) {
+        visible = !visible
+        val pos = inputPassword.selectionEnd.coerceAtLeast(0)
+
+        if (visible) {
+            inputPassword.transformationMethod = null
+            inputPassword.inputType = InputType.TYPE_CLASS_NUMBER
+            txPassword.endIconDrawable = ContextCompat.getDrawable(this@LoginActivity, R.drawable.eye_close)
+        } else {
+            inputPassword.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD
+            inputPassword.transformationMethod = PasswordTransformationMethod.getInstance()
+            txPassword.endIconDrawable = ContextCompat.getDrawable(this@LoginActivity, R.drawable.eye_open)
+        }
+        inputPassword.setSelection(pos)
+    }
+
+    private fun paintPassError() = with(binding) {
+        txPassword.error = "Mínimo 6 dígitos"
+        txPassword.setErrorTextColor(ColorStateList.valueOf(ContextCompat.getColor(this@LoginActivity, R.color.red_error)))
+        txPassword.setBoxStrokeColor(ContextCompat.getColor(this@LoginActivity, R.color.red_error))
+    }
+
+    private fun paintPassOk() = with(binding) {
+        txPassword.error = null
+        txPassword.setBoxStrokeColor(ContextCompat.getColor(this@LoginActivity, R.color.white))
     }
 }
