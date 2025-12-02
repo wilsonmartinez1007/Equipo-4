@@ -101,7 +101,7 @@ class ProductDetailFragment : Fragment() {
     }
 
     private fun deleteProduct() {
-        inventoryViewModel.deleteInventoryById(productId) {
+        inventoryViewModel.deleteInventoryFromFirestore(productId) {
             findNavController().popBackStack()
         }
     }

@@ -184,10 +184,15 @@ class InventoryRepository(context: Context) {
 
         return liveData
     }
-
-
-    // Eliminar por id en Firestore
-    suspend fun deleteById(itemId: Int) =
-        withContext(Dispatchers.IO) { inventoryDao.deleteInventoryById(itemId) }
+    // Version en firebase
+    suspend fun deleteFromFirestore(itemId: Int) {
+        withContext(Dispatchers.IO) {
+            try {
+                collectionRef.document(itemId.toString()).delete().await()
+            } catch (e: Exception) {
+                // Manejar error si es necesario
+            }
+        }
+    }
 
 }
