@@ -18,7 +18,9 @@ import com.univalle.inventory.R
 import android.content.res.ColorStateList
 import android.text.InputType
 import android.text.method.PasswordTransformationMethod
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding

@@ -61,4 +61,9 @@ object AppModule {
             localDao = dao
         )
     }
+
+
+    @Provides
+    @Singleton
+    fun provideContext(@ApplicationContext context: Context): Context = context
 }
