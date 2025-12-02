@@ -14,10 +14,13 @@ import com.univalle.inventory.ui.model.UserResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+//importamos @inject
+import javax.inject.Inject
+
 
 class InventoryRepository(context: Context) {
 
-    private val inventoryDao: InventoryDao = InventoryDB.getDatabase(context).inventoryDao()
+
     private val firebaseAuth = FirebaseAuth.getInstance()
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val collectionRef = firestore.collection("products")
@@ -102,8 +105,7 @@ class InventoryRepository(context: Context) {
                     )
                 ).await()
 
-                //  Guardar también en Room para el widget
-                inventoryDao.saveInventory(inventory)
+
             }
             messageResponse("El inventario ha sido guardado con éxito")
         } catch (e: Exception) {
@@ -127,14 +129,6 @@ class InventoryRepository(context: Context) {
                 val firestoreList = snapshot.documents.mapNotNull {
                     it.toObject(Inventory::class.java)
                 }
-
-                //  Sincronizar con Room para el widget
-                // Limpiar Room antes de insertar (para evitar datos viejos)
-                val roomList = inventoryDao.getAllInventories()
-                roomList.forEach { inventoryDao.deleteInventoryById(it.id) }
-
-                // Insertar datos actualizados de Firestore en Room
-                firestoreList.forEach { inventoryDao.saveInventory(it) }
 
                 firestoreList
             } catch (e: Exception) {
@@ -166,8 +160,7 @@ class InventoryRepository(context: Context) {
                     .set(inventory)
                     .await()
 
-                //  Actualizar también en Room
-                inventoryDao.update(inventory)
+
             }
             messageResponse("Producto actualizado con éxito")
         } catch (e: Exception) {
@@ -203,9 +196,6 @@ class InventoryRepository(context: Context) {
             try {
                 // Eliminar de Firestore
                 collectionRef.document(itemId.toString()).delete().await()
-
-                //  Eliminar también de Room
-                inventoryDao.deleteInventoryById(itemId)
             } catch (e: Exception) {
                 // Manejar error si es necesario
             }
