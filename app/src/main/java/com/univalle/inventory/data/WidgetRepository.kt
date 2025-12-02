@@ -3,7 +3,9 @@ package com.univalle.inventory.data.repository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.univalle.inventory.data.InventoryDao
+import com.univalle.inventory.model.Inventory
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.text.NumberFormat
 import java.util.Locale
@@ -35,14 +37,25 @@ class WidgetRepository @Inject constructor(
     /**
      * CALCULAR TOTAL INVENTARIO - Criterio 8
      * Calcula el valor total del inventario multiplicando precio * cantidad
-     * de todos los productos en la base de datos local (Room)
+     * Consulta DIRECTAMENTE desde Firestore para obtener datos actualizados
      * @return Double con el valor total del inventario
      */
     suspend fun calculateTotalInventory(): Double = withContext(Dispatchers.IO) {
         try {
-            localDao.getAllInventories().sumOf {
-                (it.price * it.quantity).toDouble()
+            val currentUserEmail = firebaseAuth.currentUser?.email
+                ?: return@withContext 0.0
+
+            //  Consultar directamente desde Firestore
+            val snapshot = firestore.collection("products")
+                .whereEqualTo("userEmail", currentUserEmail)
+                .get()
+                .await()
+
+            val products = snapshot.documents.mapNotNull {
+                it.toObject(Inventory::class.java)
             }
+
+            products.sumOf { (it.price * it.quantity).toDouble() }
         } catch (e: Exception) {
             e.printStackTrace()
             0.0
@@ -52,13 +65,25 @@ class WidgetRepository @Inject constructor(
     /**
      * OBTENER VALOR TOTAL (para compatibilidad con Long)
      * Retorna el valor total del inventario como Long
+     * Consulta DIRECTAMENTE desde Firestore
      * @return Long con el valor total del inventario
      */
     suspend fun getTotalValue(): Long = withContext(Dispatchers.IO) {
         try {
-            localDao.getAllInventories().sumOf {
-                (it.price * it.quantity).toLong()
+            val currentUserEmail = firebaseAuth.currentUser?.email
+                ?: return@withContext 0L
+
+            //  Consultar directamente desde Firestore
+            val snapshot = firestore.collection("products")
+                .whereEqualTo("userEmail", currentUserEmail)
+                .get()
+                .await()
+
+            val products = snapshot.documents.mapNotNull {
+                it.toObject(Inventory::class.java)
             }
+
+            products.sumOf { (it.price * it.quantity).toLong() }
         } catch (e: Exception) {
             e.printStackTrace()
             0L
