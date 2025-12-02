@@ -97,12 +97,11 @@ class InventoryViewModel(application: Application) : AndroidViewModel(applicatio
             }
         }
 
-
-    fun deleteInventoryById(itemId: Int, onSuccess: () -> Unit = {}) {
+    fun deleteInventoryFromFirestore(itemId: Int, onSuccess: () -> Unit = {}) {
         viewModelScope.launch {
             _progressState.value = true
             try {
-                repository.deleteById(itemId)
+                repository.deleteFromFirestore(itemId)
                 onSuccess()
             } finally {
                 _progressState.value = false
