@@ -16,13 +16,13 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 //importamos @inject
 import javax.inject.Inject
+import javax.inject.Singleton
 
-
-class InventoryRepository(context: Context) {
-
-
-    private val firebaseAuth = FirebaseAuth.getInstance()
-    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+@Singleton
+class InventoryRepository @Inject constructor(
+    private val firebaseAuth: FirebaseAuth,
+    private val firestore: FirebaseFirestore,
+) {
     private val collectionRef = firestore.collection("products")
 
     suspend fun loginUser(email: String, password: String, isLogin: (Boolean) -> Unit) {
