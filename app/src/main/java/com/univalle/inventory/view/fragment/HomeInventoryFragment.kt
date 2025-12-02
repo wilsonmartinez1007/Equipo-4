@@ -15,6 +15,11 @@ import com.univalle.inventory.databinding.FragmentHomeInventoryBinding
 import com.univalle.inventory.utils.SessionManager
 import com.univalle.inventory.view.adapter.InventoryAdapter
 import com.univalle.inventory.viewmodel.InventoryViewModel
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.math.max
+
 
 class HomeInventoryFragment : Fragment() {
 
@@ -52,7 +57,17 @@ class HomeInventoryFragment : Fragment() {
         // ✅ Toolbar con título "Inventario" y botón logout
         binding.toolbarHome.toolbarInventario.title = "Inventario"
         binding.toolbarHome.btnLogout.setOnClickListener {
+            // Cerrar sesión en Firebase
+            FirebaseAuth.getInstance().signOut()
+
+            // Limpiar sesión local
             SessionManager(requireContext()).clear()
+
+            // 🔥 Notificar al widget que se cerró sesión
+            val logoutIntent = Intent("com.univalle.inventory.LOGOUT")
+            requireContext().sendBroadcast(logoutIntent)
+
+            // Ir al login
             startActivity(
                 Intent(requireContext(), com.univalle.inventory.ui.login.LoginActivity::class.java)
             )
