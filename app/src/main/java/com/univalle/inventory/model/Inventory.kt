@@ -12,4 +12,7 @@ data class Inventory (
     val name: String,
     val price: Int,
     val quantity: Int
-): Serializable
+): Serializable {
+    // Constructor vacío requerido por Firestore
+    constructor() : this(0, "", 0, 0)
+}
