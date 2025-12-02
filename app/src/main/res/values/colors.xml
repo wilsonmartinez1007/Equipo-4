@@ -14,5 +14,6 @@
 
     <!--Color gris para la toolbar como se requiere en los criterios -->
     <color name="grisToolbar">#424242</color>
-
+    <!--Para el error de la contraseña-->
+    <color name="red_error">#FF3B30</color>
 </resources>
