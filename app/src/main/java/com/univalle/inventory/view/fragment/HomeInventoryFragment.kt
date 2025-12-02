@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.univalle.inventory.R
@@ -16,28 +15,30 @@ import com.univalle.inventory.databinding.FragmentHomeInventoryBinding
 import com.univalle.inventory.utils.SessionManager
 import com.univalle.inventory.view.adapter.InventoryAdapter
 import com.univalle.inventory.viewmodel.InventoryViewModel
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.max
+import javax.inject.Inject
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HomeInventoryFragment : Fragment() {
 
-    private var _binding: FragmentHomeInventoryBinding? = null
-    private val binding get() = _binding!!
-
+    private lateinit var binding: FragmentHomeInventoryBinding
     private val inventoryViewModel: InventoryViewModel by viewModels()
-    private lateinit var adapterInventory: InventoryAdapter
 
-    // Control del tiempo mínimo de loader (2 segundos)
-    private var loadStartMs: Long = 0L
-    private val minLoaderMillis = 2000L
+    @Inject
+    lateinit var sessionManager: SessionManager
+    private lateinit var adapterInventory: InventoryAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentHomeInventoryBinding.inflate(inflater, container, false)
+    ): View? {
+        binding = FragmentHomeInventoryBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
 
@@ -45,8 +46,8 @@ class HomeInventoryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         //  Verificar sesión: si NO hay sesión, mandar a Login y cerrar esta Activity
-        val session = SessionManager(requireContext())
-        if (!session.isLoggedIn()) {
+
+        if (!sessionManager.isLoggedIn()) {
             startActivity(
                 Intent(
                     requireContext(),
@@ -57,61 +58,74 @@ class HomeInventoryFragment : Fragment() {
             return
         }
 
-        // Toolbar con título "Inventario" y botón logout
+        // ✅ Toolbar con título "Inventario" y botón logout
         binding.toolbarHome.toolbarInventario.title = "Inventario"
         binding.toolbarHome.btnLogout.setOnClickListener {
-            SessionManager(requireContext()).clear()
+            // Cerrar sesión en Firebase
+            FirebaseAuth.getInstance().signOut()
+
+            // Limpiar sesión local
+            sessionManager.clear()
+
+            // 🔥 Notificar al widget que se cerró sesión
+            val logoutIntent = Intent("com.univalle.inventory.LOGOUT")
+            requireContext().sendBroadcast(logoutIntent)
+
+            // Ir al login
             startActivity(
                 Intent(requireContext(), com.univalle.inventory.ui.login.LoginActivity::class.java)
             )
             requireActivity().finishAffinity()
         }
 
-        // Recycler + Adapter
+        // ✅ Configurar RecyclerView y Adapter vacío al inicio
         adapterInventory = InventoryAdapter(mutableListOf(), findNavController())
         binding.recyclerViewInventario.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = adapterInventory
         }
 
-        // Observers con espera para cumplir el mínimo de 2s de loader
-        inventoryViewModel.listInventory.observe(viewLifecycleOwner) { list ->
-            val elapsed = System.currentTimeMillis() - loadStartMs
-            val remaining = max(0L, minLoaderMillis - elapsed)
+        controladores()
+        observadorViewModel()
+    }
 
-            viewLifecycleOwner.lifecycleScope.launch {
-                delay(remaining)
-                adapterInventory.replaceAll(list)
-                binding.progressCircular.isVisible = false
-                binding.recyclerViewInventario.isVisible = list.isNotEmpty()
-            }
-        }
-
-        inventoryViewModel.progressState.observe(viewLifecycleOwner) { loading ->
-            if (loading) {
-                binding.progressCircular.isVisible = true
-                binding.recyclerViewInventario.isVisible = false
-            }
-        }
-
+    // --------- Controladores de UI ---------
+    private fun controladores() {
         // FAB → Agregar producto
         binding.fabAdd.setOnClickListener {
             findNavController().navigate(R.id.action_homeInventoryFragment_to_addItemFragment)
         }
-
-        // Primera carga con mínimo de 2s
-        startMinLoadAndFetch()
     }
 
-    private fun startMinLoadAndFetch() {
-        loadStartMs = System.currentTimeMillis()
-        binding.progressCircular.isVisible = true
-        binding.recyclerViewInventario.isVisible = false
+    // --------- Observadores del ViewModel ---------
+    private fun observadorViewModel() {
+        observerListInventory()
+        observerProgress()
+    }
+
+    private fun observerListInventory() {
+        // Pedir la lista (desde Firebase, vía ViewModel/Repository)
         inventoryViewModel.getListInventory()
+
+        inventoryViewModel.listInventory.observe(viewLifecycleOwner) { listInventory ->
+            // Actualizar el adapter cada vez que cambie la lista
+            val adapter = InventoryAdapter(listInventory.toMutableList(), findNavController())
+            binding.recyclerViewInventario.adapter = adapter
+            adapter.notifyDataSetChanged()
+
+            // Mostrar el Recycler cuando ya haya datos (aunque sea vacío)
+            binding.recyclerViewInventario.isVisible = true
+        }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun observerProgress() {
+        inventoryViewModel.progressState.observe(viewLifecycleOwner) { status ->
+            // Círculo de carga
+            binding.progressCircular.isVisible = status
+            // Mientras está cargando, ocultar el Recycler
+            if (status) {
+                binding.recyclerViewInventario.isVisible = false
+            }
+        }
     }
 }

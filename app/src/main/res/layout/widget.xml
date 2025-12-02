@@ -16,7 +16,7 @@
         android:layout_marginStart="3dp"
         android:layout_marginTop="10dp"
         android:contentDescription="@string/logo_inventory"
-        android:src="@mipmap/ic_launcher_foreground" />
+        android:src="@mipmap/ic_launcherwilsonlogin_foreground" />
 
     <!-- TEXTO "INVENTORY" (Criterio 3) - Debajo del logo, naranja -->
     <TextView

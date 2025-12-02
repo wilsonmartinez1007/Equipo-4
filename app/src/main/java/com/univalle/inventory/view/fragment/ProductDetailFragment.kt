@@ -1,5 +1,4 @@
 package com.univalle.inventory.view.fragment
-
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -18,12 +17,13 @@ import com.univalle.inventory.model.Inventory
 import com.univalle.inventory.viewmodel.InventoryViewModel
 import java.text.NumberFormat
 import java.util.*
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ProductDetailFragment : Fragment() {
 
     private var productId: Int = -1
     private val inventoryViewModel: InventoryViewModel by viewModels()
-
     private lateinit var tvName: TextView
     private lateinit var tvPrice: TextView
     private lateinit var tvQuantity: TextView
@@ -101,7 +101,7 @@ class ProductDetailFragment : Fragment() {
     }
 
     private fun deleteProduct() {
-        inventoryViewModel.deleteInventoryById(productId) {
+        inventoryViewModel.deleteInventoryFromFirestore(productId) {
             findNavController().popBackStack()
         }
     }

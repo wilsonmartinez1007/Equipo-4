@@ -20,7 +20,7 @@
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="100dp"
             android:contentDescription="@string/logo_inventory"
-            android:src="@mipmap/ic_launcher_foreground" />
+            android:src="@mipmap/ic_launcherwilsonlogin_foreground" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/txEmail"
@@ -63,15 +63,21 @@
             android:textColorHint="@color/white"
             app:boxBackgroundMode="outline"
             app:boxStrokeColor="@color/white"
-            app:hintTextColor="@color/white">
+            app:hintTextColor="@color/white"
+            app:endIconMode="custom"
+            app:endIconDrawable="@drawable/eye_open"
+            app:endIconTint="@color/white"
+            app:errorEnabled="true"
+            >
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/inputPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number"
+                android:inputType="numberPassword"
                 android:maxLength="10"
-                android:textColor="@color/white">
+                android:textColor="@color/white"
+                >
 
             </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
