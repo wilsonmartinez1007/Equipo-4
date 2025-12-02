@@ -19,13 +19,17 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.max
+import javax.inject.Inject
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class HomeInventoryFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeInventoryBinding
     private val inventoryViewModel: InventoryViewModel by viewModels()
 
+    @Inject
+    lateinit var sessionManager: SessionManager
     private lateinit var adapterInventory: InventoryAdapter
 
     override fun onCreateView(
@@ -42,8 +46,8 @@ class HomeInventoryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         //  Verificar sesión: si NO hay sesión, mandar a Login y cerrar esta Activity
-        val session = SessionManager(requireContext())
-        if (!session.isLoggedIn()) {
+
+        if (!sessionManager.isLoggedIn()) {
             startActivity(
                 Intent(
                     requireContext(),
@@ -61,7 +65,7 @@ class HomeInventoryFragment : Fragment() {
             FirebaseAuth.getInstance().signOut()
 
             // Limpiar sesión local
-            SessionManager(requireContext()).clear()
+            sessionManager.clear()
 
             // 🔥 Notificar al widget que se cerró sesión
             val logoutIntent = Intent("com.univalle.inventory.LOGOUT")

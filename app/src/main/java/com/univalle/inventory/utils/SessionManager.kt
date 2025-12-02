@@ -2,8 +2,13 @@ package com.univalle.inventory.utils
 
 import android.content.Context
 import android.content.SharedPreferences
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class SessionManager(context: Context) {
+@Singleton
+class SessionManager @Inject constructor(  // ← @Inject en constructor
+    private val context: Context
+) {
     private val prefs: SharedPreferences =
         context.getSharedPreferences("session", Context.MODE_PRIVATE)
 
