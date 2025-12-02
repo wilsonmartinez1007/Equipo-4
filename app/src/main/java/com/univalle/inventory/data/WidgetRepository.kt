@@ -23,8 +23,6 @@ class WidgetRepository @Inject constructor(
     private val localDao: InventoryDao
 ) {
 
-    private var isVisible = true
-
     /**
      * VALIDAR AUTENTICACIÓN - Criterios 7, 10, 13, 14
      * Verifica si hay un usuario autenticado en Firebase Auth
@@ -89,19 +87,4 @@ class WidgetRepository @Inject constructor(
         val totalValue = getTotalValue()
         return formatCurrency(totalValue.toDouble())
     }
-
-    /**
-     * TOGGLE VISIBILIDAD
-     * Alterna el estado de visibilidad del widget
-     */
-    fun toggleVisibility() {
-        isVisible = !isVisible
-    }
-
-    /**
-     * OBTENER ESTADO DE VISIBILIDAD
-     * Retorna el estado actual de visibilidad del widget
-     * @return Boolean indicando si el widget es visible
-     */
-    fun getVisibilityState(): Boolean = isVisible
 }
