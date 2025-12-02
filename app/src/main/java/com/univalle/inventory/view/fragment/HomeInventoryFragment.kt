@@ -36,7 +36,7 @@ class HomeInventoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // ✅ Verificar sesión: si NO hay sesión, mandar a Login y cerrar esta Activity
+        //  Verificar sesión: si NO hay sesión, mandar a Login y cerrar esta Activity
         val session = SessionManager(requireContext())
         if (!session.isLoggedIn()) {
             startActivity(
