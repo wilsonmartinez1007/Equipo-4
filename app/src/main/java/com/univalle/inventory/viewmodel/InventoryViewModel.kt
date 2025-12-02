@@ -8,9 +8,13 @@ import com.univalle.inventory.repository.InventoryRepository
 import kotlinx.coroutines.launch
 import com.univalle.inventory.ui.model.UserRequest
 import com.univalle.inventory.ui.model.UserResponse
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class InventoryViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository = InventoryRepository(getApplication())
+@HiltViewModel
+class InventoryViewModel @Inject constructor(
+    private val repository: InventoryRepository
+) : ViewModel() {
 
     // Lista que va a observar el Home
     private val _listInventory = MutableLiveData<List<Inventory>>()
