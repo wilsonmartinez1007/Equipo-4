@@ -60,5 +60,28 @@ class InventoryViewModelTest {
         assertEquals(false, inventoryViewModel.progressState.value)
     }
 
+    @Test
+    fun `test de loginUser`() = runBlocking {
+        val email = "test@correo.com"
+        val password = "123456"
+        var loginResult: Boolean? = null
+        val callback: (Boolean) -> Unit = { result ->
+            loginResult = result
+        }
 
+        inventoryViewModel.loginUser(email, password, callback)
+        verify(inventoryRepository).loginUser(email, password, callback)
+    }
+    @Test
+    fun `test para deleteInventoryFromFirestore`() = runBlocking {
+        val itemId = 10
+        var successCalled = false
+        inventoryViewModel.deleteInventoryFromFirestore(itemId) {
+            successCalled = true
+        }
+
+        verify(inventoryRepository).deleteFromFirestore(itemId)
+        assertEquals(true, successCalled)
+        assertEquals(false, inventoryViewModel.progressState.value)
+    }
 }
