@@ -187,20 +187,7 @@ class InventoryRepository(context: Context) {
 
 
     // Eliminar por id en Firestore
-    suspend fun deleteById(
-        itemId: Int,
-        messageResponse: (String) -> Unit
-    ) {
-        try {
-            withContext(Dispatchers.IO) {
-                collectionRef
-                    .document(itemId.toString())
-                    .delete()
-                    .await()
-            }
-            messageResponse("Producto eliminado con éxito")
-        } catch (e: Exception) {
-            messageResponse("Error al eliminar: ${e.message}")
-        }
-    }
+    suspend fun deleteById(itemId: Int) =
+        withContext(Dispatchers.IO) { inventoryDao.deleteInventoryById(itemId) }
+
 }
