@@ -1,5 +1,6 @@
 package com.univalle.inventory.ui.login
 
+import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -14,23 +15,26 @@ import android.content.SharedPreferences
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import com.univalle.inventory.R
-
 import android.content.res.ColorStateList
 import android.text.InputType
 import android.text.method.PasswordTransformationMethod
-
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
     private lateinit var session: SessionManager
-
-    private val inventoryViewModel: InventoryViewModel by viewModels()
     private lateinit var sharedPreferences: SharedPreferences
 
+    private val inventoryViewModel: InventoryViewModel by viewModels()
+
+    // --- Variables para validación de password ---
     private var visible = false
     private var started = false
     private val MIN_PASS = 6
+
+    // --- Variables para soporte widget (HU1) ---
+    private var fromWidget = false
+    private var widgetId = AppWidgetManager.INVALID_APPWIDGET_ID
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,38 +43,38 @@ class LoginActivity : AppCompatActivity() {
 
         supportActionBar?.hide()
         session = SessionManager(this)
+        sharedPreferences = getSharedPreferences("shared", MODE_PRIVATE)
 
-        // Si ya hay sesión guardada, saltar el login
+        // Recibe datos del widget
+        fromWidget = intent.getBooleanExtra("from_widget", false)
+        widgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID)
+
         if (session.isLoggedIn()) {
-            goToHome()
+            handleAfterAuth()
             return
         }
-        sharedPreferences = getSharedPreferences("shared", MODE_PRIVATE)
+
         setup()
         setupPasswordField()
         viewModelObserver()
-
-
     }
-    private fun viewModelObserver(){
-        observerIsRegister()
-    }
-    private  fun observerIsRegister(){
-        inventoryViewModel.isRegister.observe(this){userResponse ->
-            if (userResponse.isRegister){
+
+    private fun viewModelObserver() {
+        inventoryViewModel.isRegister.observe(this) { userResponse ->
+            if (userResponse.isRegister) {
                 Toast.makeText(this, userResponse.message, Toast.LENGTH_SHORT).show()
                 sharedPreferences.edit().putString("email", userResponse.email).apply()
                 session.setLoggedIn(true)
-                goToHome()
+                handleAfterAuth()
             } else {
                 Toast.makeText(this, userResponse.message, Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-
-    private fun setup(){
+    private fun setup() {
         validarDatos()
+
         binding.btRegister.setOnClickListener {
             registerUser()
         }
@@ -78,42 +82,39 @@ class LoginActivity : AppCompatActivity() {
             loginUser()
         }
     }
-    private fun registerUser(){
+
+    private fun registerUser() {
         val email = binding.inputEmail.text.toString()
         val password = binding.inputPassword.text.toString()
-        val userRequest = UserRequest(email,password)
 
-        if (email.isNotEmpty() && password.isNotEmpty()){
-            inventoryViewModel.registerUser(userRequest)
-
-        }else{
+        if (email.isNotEmpty() && password.isNotEmpty()) {
+            inventoryViewModel.registerUser(UserRequest(email, password))
+        } else {
             Toast.makeText(this, "Campos Vacios", Toast.LENGTH_SHORT).show()
         }
     }
+
     private fun loginUser() {
         val email = binding.inputEmail.text.toString()
         val password = binding.inputPassword.text.toString()
-        inventoryViewModel.loginUser(email,password){ isLogin ->
-            if (isLogin){
-                sharedPreferences.edit().putString("email",email).apply()
+
+        inventoryViewModel.loginUser(email, password) { isLogin ->
+            if (isLogin) {
+                sharedPreferences.edit().putString("email", email).apply()
                 session.setLoggedIn(true)
-                goToHome()
-            }else{
+                handleAfterAuth()
+            } else {
                 Toast.makeText(this, "Login incorrecto", Toast.LENGTH_SHORT).show()
             }
         }
-
-
     }
-    //verificamos si todos los campos han sido llenados
-    private fun validarDatos(){
+
+    private fun validarDatos() {
         val listEditText = listOf(binding.inputEmail, binding.inputPassword)
 
         for (editText in listEditText) {
             editText.addTextChangedListener {
-                val isListFull = listEditText.all{
-                    it.text.toString().isNotEmpty()
-                }
+                val isListFull = listEditText.all { it.text.toString().isNotEmpty() }
                 actualizarBoton(isListFull) { color ->
                     binding.btLogin.apply {
                         isEnabled = isListFull
@@ -121,24 +122,36 @@ class LoginActivity : AppCompatActivity() {
                     }
                     binding.btRegister.isEnabled = isListFull
                 }
-
             }
         }
     }
+
     private fun actualizarBoton(estado: Boolean, accion: (Int) -> Unit) {
         val color = if (estado) R.color.white else R.color.grisToolbar
         accion(color)
     }
 
+    // --- Flujo unificado para manejar después de autenticación (HU1) ---
+    private fun handleAfterAuth() {
+        if (fromWidget && widgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+            returnToWidget()
+            return
+        }
+        goToHome()
+    }
+
+    private fun returnToWidget() {
+        finish()
+    }
 
     private fun goToHome() {
         val intent = Intent(this, MainActivity::class.java).apply {
-            //  crea nueva task y limpia la pila para que la app no “se salga”
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
         startActivity(intent)
-        // no hace falta finish(): CLEAR_TASK ya quita el Login de la pila
     }
+
+    // --- Validación y toggle de password ---
     private fun setupPasswordField() = with(binding) {
         txPassword.setEndIconOnClickListener { togglePass() }
         paintPassOk()
