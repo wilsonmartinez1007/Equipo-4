@@ -1,10 +1,13 @@
 package com.univalle.inventory.repository
 
+import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.firestore.FirebaseFirestore
+import com.univalle.inventory.data.InventoryDB
+import com.univalle.inventory.data.InventoryDao
 import com.univalle.inventory.model.Inventory
 import com.univalle.inventory.ui.model.UserRequest
 import com.univalle.inventory.ui.model.UserResponse
@@ -12,47 +15,38 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-class InventoryRepository {
 
-    //  AUTENTICACIÓN (Firebase Auth)
+class InventoryRepository(context: Context) {
+
+    private val inventoryDao: InventoryDao = InventoryDB.getDatabase(context).inventoryDao()
+
     private val firebaseAuth = FirebaseAuth.getInstance()
 
-    //  FIRESTORE
+    //FIRESTORE
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val collectionRef = firestore.collection("products")
 
-    // ----------------------
-    // AUTH: LOGIN / REGISTRO
-    // ----------------------
-
-    suspend fun loginUser(
-        email: String,
-        password: String,
-        isLogin: (Boolean) -> Unit
-    ) {
-        if (email.isNotEmpty() && password.isNotEmpty()) {
-            firebaseAuth
-                .signInWithEmailAndPassword(email, password)
+    suspend fun loginUser(email: String, password: String, isLogin: (Boolean)-> Unit){
+        if (email.isNotEmpty() && password.isNotEmpty()){
+            FirebaseAuth.getInstance()
+                .signInWithEmailAndPassword(email,password)
                 .addOnCompleteListener {
-                    isLogin(it.isSuccessful)
+                    if (it.isSuccessful){
+                        isLogin(true)
+                    }else{
+                        isLogin(false)
+                    }
                 }
-        } else {
+        }else {
             isLogin(false)
         }
     }
-
-    suspend fun registerUser(
-        userRequest: UserRequest,
-        userResponse: (UserResponse) -> Unit
-    ) {
-        withContext(Dispatchers.IO) {
-            try {
-                firebaseAuth.createUserWithEmailAndPassword(
-                    userRequest.email,
-                    userRequest.password
-                )
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
+    suspend fun registerUser(userRequest: UserRequest, userResponse: (UserResponse) -> Unit){
+        withContext(Dispatchers.IO){
+            try{
+                firebaseAuth.createUserWithEmailAndPassword(userRequest.email, userRequest.password)
+                    .addOnCompleteListener {task ->
+                        if (task.isSuccessful){
                             val email = task.result?.user?.email
                             userResponse(
                                 UserResponse(
@@ -63,7 +57,7 @@ class InventoryRepository {
                             )
                         } else {
                             val error = task.exception
-                            if (error is FirebaseAuthUserCollisionException) {
+                            if (error is FirebaseAuthUserCollisionException){
                                 userResponse(
                                     UserResponse(
                                         isRegister = false,
@@ -80,7 +74,7 @@ class InventoryRepository {
                             }
                         }
                     }
-            } catch (e: Exception) {
+            } catch (e: Exception){
                 userResponse(
                     UserResponse(
                         isRegister = false,
@@ -89,30 +83,22 @@ class InventoryRepository {
                 )
             }
         }
+
     }
 
-    // ----------------------
-    // INVENTARIO (Firestore)
-    // ----------------------
-
     // HU 4.0: guardar
-    suspend fun saveInventory(
-        inventory: Inventory,
-        messageResponse: (String) -> Unit
-    ) {
+    suspend fun saveInventory(inventory: Inventory, messageResponse: (String) -> Unit) {
         try {
             withContext(Dispatchers.IO) {
-                collectionRef
-                    .document(inventory.id.toString())
-                    .set(
-                        hashMapOf(
-                            "id" to inventory.id,
-                            "name" to inventory.name,
-                            "price" to inventory.price,
-                            "quantity" to inventory.quantity
-                        )
+                //inventoryDao.saveInventory(inventory)
+                firestore.collection("products").document(inventory.id.toString()).set(
+                    hashMapOf(
+                        "id" to inventory.id,
+                        "name" to inventory.name,
+                        "price" to inventory.price,
+                        "quantity" to inventory.quantity
                     )
-                    .await()
+                )
             }
             messageResponse("El inventario ha sido guardado con éxito")
         } catch (e: Exception) {
@@ -120,20 +106,12 @@ class InventoryRepository {
         }
     }
 
-    // HU 3.0: lista para el Home DESDE Firestore
-    suspend fun getListInventory(): List<Inventory> =
-        withContext(Dispatchers.IO) {
-            try {
-                val snapshot = collectionRef.get().await()
-                snapshot.documents.mapNotNull { doc ->
-                    doc.toObject(Inventory::class.java)
-                }
-            } catch (e: Exception) {
-                emptyList()
-            }
-        }
+    // HU 3.0: lista para el Home
 
-    // Obtener por ID DESDE Firestore
+    suspend fun getListInventory(): List<Inventory> =
+        withContext(Dispatchers.IO) { inventoryDao.getAllInventories() }
+
+    // Obtener por ID desde FIRESTORE
     suspend fun getInventoryByIdFromFirestore(itemId: Int): Inventory? =
         withContext(Dispatchers.IO) {
             try {
@@ -144,19 +122,11 @@ class InventoryRepository {
             }
         }
 
-    // Alias para mantener compatibilidad con getInventoryById() que usa el ViewModel
-    suspend fun getInventoryById(itemId: Int): Inventory? =
-        getInventoryByIdFromFirestore(itemId)
-
-    // Actualizar en Firestore
-    suspend fun updateInventoryInFirestore(
-        inventory: Inventory,
-        messageResponse: (String) -> Unit
-    ) {
+    // Actualizar en FIRESTORE
+    suspend fun updateInventoryInFirestore(inventory: Inventory, messageResponse: (String) -> Unit) {
         try {
             withContext(Dispatchers.IO) {
-                collectionRef
-                    .document(inventory.id.toString())
+                collectionRef.document(inventory.id.toString())
                     .set(inventory)
                     .await()
             }
@@ -166,35 +136,12 @@ class InventoryRepository {
         }
     }
 
-    // LiveData observando cambios en Firestore (en tiempo real)
-    fun observeInventories(): LiveData<List<Inventory>> {
-        val liveData = MutableLiveData<List<Inventory>>()
+    suspend fun getInventoryById(itemId: Int): Inventory? =
+        withContext(Dispatchers.IO) { inventoryDao.getInventoryById(itemId) }
+    fun observeInventories(): LiveData<List<Inventory>> =
+        inventoryDao.observeInventories()
+    // (Opcional) eliminar por id
+    suspend fun deleteById(itemId: Int) =
+        withContext(Dispatchers.IO) { inventoryDao.deleteInventoryById(itemId) }
 
-        collectionRef.addSnapshotListener { snapshot, _ ->
-            val list = snapshot?.documents
-                ?.mapNotNull { it.toObject(Inventory::class.java) }
-                ?: emptyList()
-            liveData.postValue(list)
-        }
-
-        return liveData
-    }
-
-    // Eliminar por id en Firestore
-    suspend fun deleteById(
-        itemId: Int,
-        messageResponse: (String) -> Unit
-    ) {
-        try {
-            withContext(Dispatchers.IO) {
-                collectionRef
-                    .document(itemId.toString())
-                    .delete()
-                    .await()
-            }
-            messageResponse("Producto eliminado con éxito")
-        } catch (e: Exception) {
-            messageResponse("Error al eliminar: ${e.message}")
-        }
-    }
 }
