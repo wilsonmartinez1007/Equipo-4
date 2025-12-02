@@ -20,7 +20,7 @@
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginTop="100dp"
             android:contentDescription="@string/logo_inventory"
-            android:src="@mipmap/ic_launcher_foreground" />
+            android:src="@mipmap/ic_launcherwilsonlogin_foreground" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/txEmail"
